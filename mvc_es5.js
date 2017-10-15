@@ -215,14 +215,16 @@ var VC = function () {
 	}, {
 		key: 'render',
 		value: function render() {
+			var _this5 = this;
+
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 
 			// STEP 2
-			function step2() {
-				this.render_always(resolve, reject);
-			}
+			var step2 = function step2() {
+				_this5.render_always(resolve, reject);
+			};
 
 			// STEP 1
 			if (this.renderedOnce != true) {
@@ -259,16 +261,16 @@ var NavVC = function (_VC) {
 	function NavVC() {
 		_classCallCheck(this, NavVC);
 
-		var _this5 = _possibleConstructorReturn(this, (NavVC.__proto__ || Object.getPrototypeOf(NavVC)).call(this));
+		var _this6 = _possibleConstructorReturn(this, (NavVC.__proto__ || Object.getPrototypeOf(NavVC)).call(this));
 
-		_this5.vcs = null;
-		return _this5;
+		_this6.vcs = null;
+		return _this6;
 	}
 
 	_createClass(NavVC, [{
 		key: 'closeVC',
 		value: function closeVC(vc) {
-			var _this6 = this;
+			var _this7 = this;
 
 			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
@@ -283,9 +285,9 @@ var NavVC = function (_VC) {
 				}
 			}
 			this.render(function () {
-				var idx = _this6.vcs.indexOf(vc);
+				var idx = _this7.vcs.indexOf(vc);
 				if (idx != -1) {
-					_this6.vcs.splice(idx, 1);
+					_this7.vcs.splice(idx, 1);
 				}
 				vc.remove(resolve, reject);
 			}, reject);
@@ -317,18 +319,20 @@ var NavVC = function (_VC) {
 	}, {
 		key: 'render_always_vc',
 		value: function render_always_vc() {
+			var _this8 = this;
+
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 
 			// STEP 2
-			function step2() {
-				var topVC = this.vcs[this.vcs.length - 1];
-				topVC.navVC = this;
+			var step2 = function step2() {
+				var topVC = _this8.vcs[_this8.vcs.length - 1];
+				topVC.navVC = _this8;
 				topVC.render(function () {
 					topVC.$view.fadeIn(resolve);
 				}, reject);
-			}
+			};
 
 			// STEP 1
 			if (this.vcs == null || this.vcs.length == 0) {
@@ -363,36 +367,36 @@ var NavbarVC = function (_NavVC) {
 	function NavbarVC() {
 		_classCallCheck(this, NavbarVC);
 
-		var _this7 = _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).call(this));
+		var _this9 = _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).call(this));
 
-		_this7.$view = null;
-		_this7.cotApp = null;
-		_this7.cotLogin = null;
-		_this7.defaultVC = null;
-		_this7.menu = null;
-		_this7.vcClasses = null;
-		return _this7;
+		_this9.$view = null;
+		_this9.cotApp = null;
+		_this9.cotLogin = null;
+		_this9.defaultVC = null;
+		_this9.menu = null;
+		_this9.vcClasses = null;
+		return _this9;
 	}
 
 	_createClass(NavbarVC, [{
 		key: 'render_always',
 		value: function render_always() {
-			var _this8 = this;
+			var _this10 = this;
 
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			this.$view.filter('.requireLogin').hide();
 			this.render_always_login(function () {
-				_this8.render_always_vc(function () {
-					_this8.render_always_menu(resolve, reject);
+				_this10.render_always_vc(function () {
+					_this10.render_always_menu(resolve, reject);
 				}, reject);
 			}, reject);
 		}
 	}, {
 		key: 'render_always_login',
 		value: function render_always_login() {
-			var _this9 = this;
+			var _this11 = this;
 
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
@@ -404,12 +408,12 @@ var NavbarVC = function (_NavVC) {
 				if (this.cotLogin.isLoggedIn()) {
 					$login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<p class="form-control-static">' + this.cotLogin.username + '</p>\n\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t').find('.btn-logout').on('click', function (e) {
 						e.preventDefault();
-						_this9.cotLogin.logout();
+						_this11.cotLogin.logout();
 					});
 				} else {
 					$login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t').find('.btn-login').on('click', function (e) {
 						e.preventDefault();
-						_this9.cotLogin.showLogin();
+						_this11.cotLogin.showLogin();
 					});
 				}
 			}
@@ -418,7 +422,7 @@ var NavbarVC = function (_NavVC) {
 	}, {
 		key: 'render_always_menu',
 		value: function render_always_menu() {
-			var _this10 = this;
+			var _this12 = this;
 
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
@@ -442,9 +446,9 @@ var NavbarVC = function (_NavVC) {
 						$menuItem.find('a').on('click', function (e) {
 							e.preventDefault();
 							if (menu.vc == null) {
-								menu.vc = new _this10.vcClasses[menu.vcClass]();
+								menu.vc = new _this12.vcClasses[menu.vcClass]();
 							}
-							_this10.openVC(menu.vc);
+							_this12.openVC(menu.vc);
 						});
 					};
 
@@ -488,7 +492,7 @@ var NavbarVC = function (_NavVC) {
 						$dropDownMenu.append($menuItem);
 						$menuItem.find('a').on('click', function (e) {
 							e.preventDefault();
-							_this10.openVC(vc);
+							_this12.openVC(vc);
 						});
 					};
 
@@ -531,14 +535,14 @@ var NavbarVC = function (_NavVC) {
 	}, {
 		key: 'render_once',
 		value: function render_once() {
-			var _this11 = this;
+			var _this13 = this;
 
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			if (this.cotLogin != null) {
 				this.cotLogin.options.onLogin = function () {
-					_this11.render();
+					_this13.render();
 				};
 			}
 

@@ -119,7 +119,7 @@ class VC {
 	render(resolve = () => {}, reject = () => {}) {
 
 		// STEP 2
-		function step2() {
+		const step2 = () => {
 			this.render_always(resolve, reject);
 		}
 
@@ -179,7 +179,7 @@ class NavVC extends VC {
 	render_always_vc(resolve = () => {}, reject = () => {}) {
 
 		// STEP 2
-		function step2() {
+		const step2 = () => {
 			const topVC = this.vcs[this.vcs.length - 1];
 			topVC.navVC = this;
 			topVC.render(() => {
