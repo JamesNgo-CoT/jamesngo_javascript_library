@@ -529,7 +529,7 @@ var NavbarVC = function(_NavVC) {
 				return this.openVC(this.defaultVC.vc);
 			}
 
-			return this.super.render_always_vc();
+			return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always_vc', this).call(this);
 		}
 	}, {
 		key: 'render_once',

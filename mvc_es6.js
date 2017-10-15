@@ -317,7 +317,7 @@ class NavbarVC extends NavVC {
 			return this.openVC(this.defaultVC.vc);
 		}
 
-		return this.super.render_always_vc();
+		return super.render_always_vc();
 	}
 	render_once() {
 		return new Promise((resolve, reject) => {
