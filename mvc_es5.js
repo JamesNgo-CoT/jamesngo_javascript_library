@@ -1,70 +1,14 @@
 'use strict';
 
-var _get = function get(object, property, receiver) {
-	if (object === null) object = Function.prototype;
-	var desc = Object.getOwnPropertyDescriptor(object, property);
-	if (desc === undefined) {
-		var parent = Object.getPrototypeOf(object);
-		if (parent === null) {
-			return undefined;
-		} else {
-			return get(parent, property, receiver);
-		}
-	} else if ("value" in desc) {
-		return desc.value;
-	} else {
-		var getter = desc.get;
-		if (getter === undefined) {
-			return undefined;
-		}
-		return getter.call(receiver);
-	}
-};
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _createClass = function() {
-	function defineProperties(target, props) {
-		for (var i = 0; i < props.length; i++) {
-			var descriptor = props[i];
-			descriptor.enumerable = descriptor.enumerable || false;
-			descriptor.configurable = true;
-			if ("value" in descriptor) descriptor.writable = true;
-			Object.defineProperty(target, descriptor.key, descriptor);
-		}
-	}
-	return function(Constructor, protoProps, staticProps) {
-		if (protoProps) defineProperties(Constructor.prototype, protoProps);
-		if (staticProps) defineProperties(Constructor, staticProps);
-		return Constructor;
-	};
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _possibleConstructorReturn(self, call) {
-	if (!self) {
-		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	}
-	return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) {
-	if (typeof superClass !== "function" && superClass !== null) {
-		throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-	}
-	subClass.prototype = Object.create(superClass && superClass.prototype, {
-		constructor: {
-			value: subClass,
-			enumerable: false,
-			writable: true,
-			configurable: true
-		}
-	});
-	if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-function _classCallCheck(instance, Constructor) {
-	if (!(instance instanceof Constructor)) {
-		throw new TypeError("Cannot call a class as a function");
-	}
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  Model Controller
@@ -72,7 +16,7 @@ function _classCallCheck(instance, Constructor) {
  - model
  - url
  */
-var MC = function() {
+var MC = function () {
 	function MC() {
 		_classCallCheck(this, MC);
 	}
@@ -91,7 +35,7 @@ var MC = function() {
 		value: function httpGet(id) {
 			var _this = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				$.ajax(_this.url + '(\'' + id + '\')', {
 					error: function error(jqXHR, textStatus, errorThrown) {
 						reject(_this, jqXHR, textStatus, errorThrown);
@@ -108,7 +52,7 @@ var MC = function() {
 		value: function httpPatch() {
 			var _this2 = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				$.ajax(_this2.url + '(\'' + _this2.model.id + '\')', {
 					data: JSON.stringify(_this2.model),
 					error: function error(jqXHR, textStatus, errorThrown) {
@@ -126,7 +70,7 @@ var MC = function() {
 		value: function httpPost() {
 			var _this3 = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				_this3._model.id = null;
 				$.ajax(_this3.url, {
 					data: JSON.stringify(_this3.model),
@@ -146,7 +90,7 @@ var MC = function() {
 		value: function httpPut() {
 			var _this4 = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				$.ajax(_this4.url + '(\'' + _this4.model.id + '\')', {
 					data: JSON.stringify(_this4.model),
 					error: function error(jqXHR, textStatus, errorThrown) {
@@ -171,7 +115,7 @@ var MC = function() {
  */
 
 
-var CotModelMC = function(_MC) {
+var CotModelMC = function (_MC) {
 	_inherits(CotModelMC, _MC);
 
 	function CotModelMC() {
@@ -191,7 +135,7 @@ var CotModelMC = function(_MC) {
 		value: function httpGet(id) {
 			var _this6 = this;
 
-			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpGet', this).call(this, id).then(function() {
+			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpGet', this).call(this, id).then(function () {
 				_this6._cotModel.set(_this6.model);
 			});
 		}
@@ -207,7 +151,7 @@ var CotModelMC = function(_MC) {
 			var _this7 = this;
 
 			this.model = this.cotModel.toJSON();
-			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPost', this).call(this).then(function() {
+			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPost', this).call(this).then(function () {
 				_this7.cotModel.set('id', _this7.model.id);
 			});
 		}
@@ -225,7 +169,7 @@ var CotModelMC = function(_MC) {
 /** View Controller */
 
 
-var VC = function() {
+var VC = function () {
 	function VC() {
 		_classCallCheck(this, VC);
 	}
@@ -240,14 +184,14 @@ var VC = function() {
 		value: function render() {
 			var _this8 = this;
 
-			return new Promise(function(resolve, reject) {
-				(_this8.renderedOnce != true ? function() {
+			return new Promise(function (resolve, reject) {
+				(_this8.renderedOnce != true ? function () {
 					_this8.renderedOnce = true;
 					return _this8.render_once();
-				}() : Promise.resolve()).then(function() {
-					_this8.render_always().then(function() {
+				}() : Promise.resolve()).then(function () {
+					_this8.render_always().then(function () {
 						resolve();
-					}, function() {
+					}, function () {
 						reject();
 					});
 				});
@@ -268,7 +212,7 @@ var VC = function() {
 	return VC;
 }();
 
-var NavVC = function(_VC) {
+var NavVC = function (_VC) {
 	_inherits(NavVC, _VC);
 
 	function NavVC() {
@@ -282,7 +226,7 @@ var NavVC = function(_VC) {
 		value: function closeVC(vc) {
 			var _this10 = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				if (_this10.vcs != null && _this10.vcs.length > 0 && _this10.vcs[_this10.vcs.length - 1] == vc) {
 					_this10.vcs.pop();
 					if (_this10.vcs.length > 0) {
@@ -292,12 +236,12 @@ var NavVC = function(_VC) {
 						_this10.vcs.$view.hide();
 					}
 				}
-				_this10.render().then(function() {
+				_this10.render().then(function () {
 					var idx = _this10.vcs.indexOf(vc);
 					if (idx != -1) {
 						_this10.vcs.splice(idx, 1);
 					}
-					vc.remove().then(function() {
+					vc.remove().then(function () {
 						resolve();
 					});
 				});
@@ -330,20 +274,20 @@ var NavVC = function(_VC) {
 				return Promise.resolve();
 			}
 
-			return new Promise(function(resolve, reject) {
-				new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
+				new Promise(function (resolve, reject) {
 					if (_this11.vcs.length > 1) {
-						_this11.vcs[_this11.vcs.length - 2].$view.fadeOut(function() {
+						_this11.vcs[_this11.vcs.length - 2].$view.fadeOut(function () {
 							resolve();
 						});
 					} else {
 						resolve();
 					}
-				}).then(function() {
+				}).then(function () {
 					var topVC = _this11.vcs[_this11.vcs.length - 1];
-					topVC.navbarVC = _this11;
-					topVC.render().then(function() {
-						topVC.$view.fadeIn(function() {
+					topVC.navVC = _this11;
+					topVC.render().then(function () {
+						topVC.$view.fadeIn(function () {
 							resolve();
 						});
 					});
@@ -367,7 +311,7 @@ var NavVC = function(_VC) {
  */
 
 
-var NavbarVC = function(_NavVC) {
+var NavbarVC = function (_NavVC) {
 	_inherits(NavbarVC, _NavVC);
 
 	function NavbarVC() {
@@ -381,17 +325,17 @@ var NavbarVC = function(_NavVC) {
 		value: function render_always() {
 			var _this13 = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				_this13.$view.filter('.requireLogin').hide();
-				Promise.all([_this13.render_always_login(), new Promise(function(resolve, reject) {
-					_this13.render_always_vc().then(function() {
-						_this13.render_always_menu().then(function() {
+				Promise.all([_this13.render_always_login(), new Promise(function (resolve, reject) {
+					_this13.render_always_vc().then(function () {
+						_this13.render_always_menu().then(function () {
 							resolve();
 						});
 					});
-				})]).then(function() {
+				})]).then(function () {
 					resolve();
-				}, function() {
+				}, function () {
 					reject();
 				});
 			});
@@ -401,18 +345,18 @@ var NavbarVC = function(_NavVC) {
 		value: function render_always_login() {
 			var _this14 = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				var $login = _this14.$view.find('.navbar-login').empty();
 				if (_this14.cotLogin == null) {
 					// No UI
 				} else {
 					if (_this14.cotLogin.isLoggedIn()) {
-						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<p class="form-control-static">' + _this14.cotLogin.username + '</p>\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-logout').on('click', function(e) {
+						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<p class="form-control-static">' + _this14.cotLogin.username + '</p>\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-logout').on('click', function (e) {
 							e.preventDefault();
 							_this14.cotLogin.logout();
 						});
 					} else {
-						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-login').on('click', function(e) {
+						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-login').on('click', function (e) {
 							e.preventDefault();
 							_this14.cotLogin.showLogin();
 						});
@@ -427,7 +371,7 @@ var NavbarVC = function(_NavVC) {
 		value: function render_always_menu() {
 			var _this15 = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				var $menu = _this15.$view.find('.navbar-menu');
 				$menu.html('\n\t\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t\t<li class="dropdown">\n\t\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t\t\t<li role="separator" class="divider"></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</li>\n\t\t\t\t</ul>\n\t\t\t');
 
@@ -444,7 +388,7 @@ var NavbarVC = function(_NavVC) {
 
 							var $menuItem = $('<li><a href="#">' + menu.title + '</a></li>');
 							$dropDownMenu.append($menuItem);
-							$menuItem.find('a').on('click', function(e) {
+							$menuItem.find('a').on('click', function (e) {
 								e.preventDefault();
 								if (menu.vc == null) {
 									menu.vc = new _this15.vcClasses[menu.vcClass]();
@@ -472,7 +416,7 @@ var NavbarVC = function(_NavVC) {
 					}
 				}
 
-				var vcs = _this15.vcs.filter(function(vc) {
+				var vcs = _this15.vcs.filter(function (vc) {
 					return vc.title != null;
 				});
 
@@ -491,7 +435,7 @@ var NavbarVC = function(_NavVC) {
 
 							var $menuItem = $('<li><a href="#">' + (vc.title || 'Untitled') + '</a></li>');
 							$dropDownMenu.append($menuItem);
-							$menuItem.find('a').on('click', function(e) {
+							$menuItem.find('a').on('click', function (e) {
 								e.preventDefault();
 								_this15.openVC(vc);
 							});
@@ -536,9 +480,9 @@ var NavbarVC = function(_NavVC) {
 		value: function render_once() {
 			var _this16 = this;
 
-			return new Promise(function(resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				if (_this16.cotLogin != null) {
-					_this16.cotLogin.options.onLogin = function() {
+					_this16.cotLogin.options.onLogin = function () {
 						_this16.render();
 					};
 				}

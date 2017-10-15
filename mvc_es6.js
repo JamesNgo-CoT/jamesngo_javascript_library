@@ -182,7 +182,7 @@ class NavVC extends VC {
 				}
 			})).then(() => {
 				const topVC = this.vcs[this.vcs.length - 1];
-				topVC.navbarVC = this;
+				topVC.navVC = this;
 				topVC.render().then(() => {
 					topVC.$view.fadeIn(() => {
 						resolve();
