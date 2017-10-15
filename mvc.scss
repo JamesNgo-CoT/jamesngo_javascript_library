@@ -1,0 +1,66 @@
+#maincontent {
+	.navvc {
+		.container-fluid {
+			margin-left: 0;
+			margin-right: 0;
+			max-width: none;
+			@media(min-width: 768px) {
+				padding-left: 16px;
+				padding-right: 16px;
+			}
+
+			.navbar-header {
+				button {
+					margin: 8px 15px 8px 0;
+				}
+			}
+
+			ul {
+				list-style-type: none;
+				margin: 0;
+				overflow: visible;
+				padding: 0;
+
+				&.dropdown-menu {
+					max-height: none;
+					padding: 5px 0;
+					width: auto;
+
+					li+li {
+						border-top: 0;
+					}
+
+					li a {
+						white-space: nowrap;
+					}
+				}
+			}
+
+			.form-group {
+				margin-bottom: 0;
+			}
+
+			.navbar-lock,
+			.navbar-login,
+			.navbar-menu,
+			.navbar-vc-ui {
+				float: left;
+			}
+
+			.navbar-login form {
+				margin-top: 7px;
+				margin-bottom: 6px;
+			}
+
+			.navbar-lock {
+				height: 50px;
+				padding: 8px 0 8px 8px;
+				width: 42px;
+			}
+
+			button {
+				margin: 0;
+			}
+		}
+	}
+}
