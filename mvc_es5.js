@@ -231,7 +231,7 @@ var VC = function () {
 				this.renderedOnce = true;
 				this.render_once(step2, reject);
 			} else {
-				doNext();
+				step2();
 			}
 		}
 	}, {

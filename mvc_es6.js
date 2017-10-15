@@ -128,7 +128,7 @@ class VC {
 			this.renderedOnce = true;
 			this.render_once(step2, reject);
 		} else {
-			doNext();
+			step2();
 		}
 	}
 	render_always(resolve = () => {}, reject = () => {}) {
