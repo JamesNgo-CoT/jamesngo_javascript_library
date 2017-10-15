@@ -19,88 +19,92 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var MC = function () {
 	function MC() {
 		_classCallCheck(this, MC);
+
+		this.model = null;
+		this.url = null;
 	}
 
 	_createClass(MC, [{
 		key: 'httpDelete',
 		value: function httpDelete() {
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
 			this.model = {
 				id: this.model.id,
 				__Status: 'DEL'
 			};
-			return this.httpPatch();
+			this.httpPatch(resolve, reject);
 		}
 	}, {
 		key: 'httpGet',
 		value: function httpGet(id) {
-			var _this = this;
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-			return new Promise(function (resolve, reject) {
-				$.ajax(_this.url + '(\'' + id + '\')', {
-					error: function error(jqXHR, textStatus, errorThrown) {
-						reject(_this, jqXHR, textStatus, errorThrown);
-					},
-					method: 'GET',
-					success: function success(data, textStatus, jqXHR) {
-						resolve(_this, data, textStatus, jqXHR);
-					}
-				});
+			$.ajax(this.url + '(\'' + id + '\')', {
+				error: function error(jqXHR, textStatus, errorThrown) {
+					reject(jqXHR, textStatus, errorThrown);
+				},
+				method: 'GET',
+				success: function success(data, textStatus, jqXHR) {
+					resolve(data, textStatus, jqXHR);
+				}
 			});
 		}
 	}, {
 		key: 'httpPatch',
 		value: function httpPatch() {
-			var _this2 = this;
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			return new Promise(function (resolve, reject) {
-				$.ajax(_this2.url + '(\'' + _this2.model.id + '\')', {
-					data: JSON.stringify(_this2.model),
-					error: function error(jqXHR, textStatus, errorThrown) {
-						reject(_this2, jqXHR, textStatus, errorThrown);
-					},
-					method: 'PATCH',
-					success: function success(data, textStatus, jqXHR) {
-						resolve(_this2, textStatus, jqXHR);
-					}
-				});
+			$.ajax(this.url + '(\'' + this.model.id + '\')', {
+				data: JSON.stringify(this.model),
+				error: function error(jqXHR, textStatus, errorThrown) {
+					reject(jqXHR, textStatus, errorThrown);
+				},
+				method: 'PATCH',
+				success: function success(data, textStatus, jqXHR) {
+					resolve(data, textStatus, jqXHR);
+				}
 			});
 		}
 	}, {
 		key: 'httpPost',
 		value: function httpPost() {
-			var _this3 = this;
+			var _this = this;
 
-			return new Promise(function (resolve, reject) {
-				_this3._model.id = null;
-				$.ajax(_this3.url, {
-					data: JSON.stringify(_this3.model),
-					error: function error(jqXHR, textStatus, errorThrown) {
-						reject(_this3, jqXHR, textStatus, errorThrown);
-					},
-					method: 'POST',
-					success: function success(data, textStatus, jqXHR) {
-						_this3._model.id = jqXHR.getResponseHeader('OData-EntityID');
-						resolve(_this3, data, textStatus, jqXHR);
-					}
-				});
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+			this.model.id = null;
+			$.ajax(this.url, {
+				data: JSON.stringify(this.model),
+				error: function error(jqXHR, textStatus, errorThrown) {
+					reject(jqXHR, textStatus, errorThrown);
+				},
+				method: 'POST',
+				success: function success(data, textStatus, jqXHR) {
+					_this._model.id = jqXHR.getResponseHeader('OData-EntityID');
+					resolve(data, textStatus, jqXHR);
+				}
 			});
 		}
 	}, {
 		key: 'httpPut',
 		value: function httpPut() {
-			var _this4 = this;
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			return new Promise(function (resolve, reject) {
-				$.ajax(_this4.url + '(\'' + _this4.model.id + '\')', {
-					data: JSON.stringify(_this4.model),
-					error: function error(jqXHR, textStatus, errorThrown) {
-						reject(_this4, jqXHR, textStatus, errorThrown);
-					},
-					method: 'PUT',
-					success: function success(data, textStatus, jqXHR) {
-						resolve(_this4, data, textStatus, jqXHR);
-					}
-				});
+			$.ajax(this.url + '(\'' + this.model.id + '\')', {
+				data: JSON.stringify(this.model),
+				error: function error(jqXHR, textStatus, errorThrown) {
+					reject(jqXHR, textStatus, errorThrown);
+				},
+				method: 'PUT',
+				success: function success(data, textStatus, jqXHR) {
+					resolve(data, textStatus, jqXHR);
+				}
 			});
 		}
 	}]);
@@ -121,91 +125,128 @@ var CotModelMC = function (_MC) {
 	function CotModelMC() {
 		_classCallCheck(this, CotModelMC);
 
-		return _possibleConstructorReturn(this, (CotModelMC.__proto__ || Object.getPrototypeOf(CotModelMC)).apply(this, arguments));
+		var _this2 = _possibleConstructorReturn(this, (CotModelMC.__proto__ || Object.getPrototypeOf(CotModelMC)).call(this));
+
+		_this2.cotModel = null;
+		return _this2;
 	}
 
 	_createClass(CotModelMC, [{
 		key: 'httpDelete',
 		value: function httpDelete() {
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
 			this.model = this.cotModel.toJSON();
-			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpDelete', this).call(this);
+			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpDelete', this).call(this, resolve, reject);
 		}
 	}, {
 		key: 'httpGet',
 		value: function httpGet(id) {
-			var _this6 = this;
+			var _this3 = this;
 
-			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpGet', this).call(this, id).then(function () {
-				_this6._cotModel.set(_this6.model);
-			});
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpGet', this).call(this, id, function (data, textStatus, jqXHR) {
+				_this3._cotModel.set(_this3.model);
+				resolve(data, textStatus, jqXHR);
+			}, reject);
 		}
 	}, {
 		key: 'httpPatch',
 		value: function httpPatch() {
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
 			this.model = this.cotModel.toJSON();
-			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPatch', this).call(this);
+			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPatch', this).call(this, resolve, reject);
 		}
 	}, {
 		key: 'httpPost',
 		value: function httpPost() {
-			var _this7 = this;
+			var _this4 = this;
+
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			this.model = this.cotModel.toJSON();
-			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPost', this).call(this).then(function () {
-				_this7.cotModel.set('id', _this7.model.id);
-			});
+			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPost', this).call(this, function (data, textStatus, jqXHR) {
+				_this4.cotModel.set('id', _this4.model.id);
+				resolve(data, textStatus, jqXHR);
+			}, reject);
 		}
 	}, {
 		key: 'httpPut',
 		value: function httpPut() {
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
 			this.model = this.cotModel.toJSON();
-			return _get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPut', this).call(this);
+			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPut', this).call(this, resolve, reject);
 		}
 	}]);
 
 	return CotModelMC;
 }(MC);
 
-/** View Controller */
+/**
+ View Controller
+ Property:
+ - vcs
+ */
 
 
 var VC = function () {
 	function VC() {
 		_classCallCheck(this, VC);
+
+		this.renderedOnce = null;
 	}
 
 	_createClass(VC, [{
 		key: 'remove',
 		value: function remove() {
-			return Promise.resolve();
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+			resolve();
 		}
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this8 = this;
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			return new Promise(function (resolve, reject) {
-				(_this8.renderedOnce != true ? function () {
-					_this8.renderedOnce = true;
-					return _this8.render_once();
-				}() : Promise.resolve()).then(function () {
-					_this8.render_always().then(function () {
-						resolve();
-					}, function () {
-						reject();
-					});
-				});
-			});
+
+			// STEP 2
+			function step2() {
+				this.render_always(resolve, reject);
+			}
+
+			// STEP 1
+			if (this.renderedOnce != true) {
+				this.renderedOnce = true;
+				this.render_once(step2, reject);
+			} else {
+				doNext();
+			}
 		}
 	}, {
 		key: 'render_always',
 		value: function render_always() {
-			return Promise.resolve();
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+			resolve();
 		}
 	}, {
-		key: 'remove_once',
-		value: function remove_once() {
-			return Promise.resolve();
+		key: 'render_once',
+		value: function render_once() {
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+			resolve();
 		}
 	}]);
 
@@ -218,38 +259,43 @@ var NavVC = function (_VC) {
 	function NavVC() {
 		_classCallCheck(this, NavVC);
 
-		return _possibleConstructorReturn(this, (NavVC.__proto__ || Object.getPrototypeOf(NavVC)).apply(this, arguments));
+		var _this5 = _possibleConstructorReturn(this, (NavVC.__proto__ || Object.getPrototypeOf(NavVC)).call(this));
+
+		_this5.vcs = null;
+		return _this5;
 	}
 
 	_createClass(NavVC, [{
 		key: 'closeVC',
 		value: function closeVC(vc) {
-			var _this10 = this;
+			var _this6 = this;
 
-			return new Promise(function (resolve, reject) {
-				if (_this10.vcs != null && _this10.vcs.length > 0 && _this10.vcs[_this10.vcs.length - 1] == vc) {
-					_this10.vcs.pop();
-					if (_this10.vcs.length > 0) {
-						var topVC = _this10.vcs.pop();
-						_this10.vcs.push(vc, topVC);
-					} else {
-						_this10.vcs.$view.hide();
-					}
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+			if (this.vcs != null && this.vcs.length > 0 && this.vcs[this.vcs.length - 1] == vc) {
+				this.vcs.pop();
+				if (this.vcs.length > 0) {
+					var topVC = this.vcs.pop();
+					this.vcs.push(vc, topVC);
+				} else {
+					this.vcs.$view.hide();
 				}
-				_this10.render().then(function () {
-					var idx = _this10.vcs.indexOf(vc);
-					if (idx != -1) {
-						_this10.vcs.splice(idx, 1);
-					}
-					vc.remove().then(function () {
-						resolve();
-					});
-				});
-			});
+			}
+			this.render(function () {
+				var idx = _this6.vcs.indexOf(vc);
+				if (idx != -1) {
+					_this6.vcs.splice(idx, 1);
+				}
+				vc.remove(resolve, reject);
+			}, reject);
 		}
 	}, {
 		key: 'openVC',
 		value: function openVC(vc) {
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
 			if (this.vcs == null) {
 				this.vcs = [];
 			}
@@ -258,41 +304,42 @@ var NavVC = function (_VC) {
 				this.vcs.splice(idx, 1);
 			}
 			this.vcs.push(vc);
-			return this.render();
+			this.render(resolve, reject);
 		}
 	}, {
 		key: 'render_always',
 		value: function render_always() {
-			return this.render_always_vc();
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+			this.render_always_vc(resolve, reject);
 		}
 	}, {
 		key: 'render_always_vc',
 		value: function render_always_vc() {
-			var _this11 = this;
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			if (this.vcs == null || this.vcs.length == 0) {
-				return Promise.resolve();
+
+			// STEP 2
+			function step2() {
+				var topVC = this.vcs[this.vcs.length - 1];
+				topVC.navVC = this;
+				topVC.render(function () {
+					topVC.$view.fadeIn(resolve);
+				}, reject);
 			}
 
-			return new Promise(function (resolve, reject) {
-				new Promise(function (resolve, reject) {
-					if (_this11.vcs.length > 1) {
-						_this11.vcs[_this11.vcs.length - 2].$view.fadeOut(function () {
-							resolve();
-						});
-					} else {
-						resolve();
-					}
-				}).then(function () {
-					var topVC = _this11.vcs[_this11.vcs.length - 1];
-					topVC.navVC = _this11;
-					topVC.render().then(function () {
-						topVC.$view.fadeIn(function () {
-							resolve();
-						});
-					});
-				});
-			});
+			// STEP 1
+			if (this.vcs == null || this.vcs.length == 0) {
+				resolve();
+			} else {
+				if (this.vcs.length > 1) {
+					this.vcs[this.vcs.length - 2].$view.fadeOut(step2);
+				} else {
+					step2();
+				}
+			}
 		}
 	}]);
 
@@ -307,7 +354,6 @@ var NavVC = function (_VC) {
  - defaultVC
  - menu
  - vcClasses
- - vcs
  */
 
 
@@ -317,182 +363,190 @@ var NavbarVC = function (_NavVC) {
 	function NavbarVC() {
 		_classCallCheck(this, NavbarVC);
 
-		return _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).apply(this, arguments));
+		var _this7 = _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).call(this));
+
+		_this7.$view = null;
+		ccotApp = null;
+		cotLogin = null;
+		defaultVC = null;
+		menu = null;
+		vcClasses = null;
+		return _this7;
 	}
 
 	_createClass(NavbarVC, [{
 		key: 'render_always',
 		value: function render_always() {
-			var _this13 = this;
+			var _this8 = this;
 
-			return new Promise(function (resolve, reject) {
-				_this13.$view.filter('.requireLogin').hide();
-				Promise.all([_this13.render_always_login(), new Promise(function (resolve, reject) {
-					_this13.render_always_vc().then(function () {
-						_this13.render_always_menu().then(function () {
-							resolve();
-						});
-					});
-				})]).then(function () {
-					resolve();
-				}, function () {
-					reject();
-				});
-			});
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+			this.$view.filter('.requireLogin').hide();
+			this.render_always_login(function () {
+				_this8.render_always_vc(function () {
+					_this8.render_always_menu(resolve, reject);
+				}, reject);
+			}, reject);
 		}
 	}, {
 		key: 'render_always_login',
 		value: function render_always_login() {
-			var _this14 = this;
+			var _this9 = this;
 
-			return new Promise(function (resolve, reject) {
-				var $login = _this14.$view.find('.navbar-login').empty();
-				if (_this14.cotLogin == null) {
-					// No UI
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+			var $login = this.$view.find('.navbar-login').empty();
+			if (this.cotLogin == null) {
+				// No UI
+			} else {
+				if (this.cotLogin.isLoggedIn()) {
+					$login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<p class="form-control-static">' + this.cotLogin.username + '</p>\n\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t').find('.btn-logout').on('click', function (e) {
+						e.preventDefault();
+						_this9.cotLogin.logout();
+					});
 				} else {
-					if (_this14.cotLogin.isLoggedIn()) {
-						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<p class="form-control-static">' + _this14.cotLogin.username + '</p>\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-logout').on('click', function (e) {
-							e.preventDefault();
-							_this14.cotLogin.logout();
-						});
-					} else {
-						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-login').on('click', function (e) {
-							e.preventDefault();
-							_this14.cotLogin.showLogin();
-						});
-					}
+					$login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t').find('.btn-login').on('click', function (e) {
+						e.preventDefault();
+						_this9.cotLogin.showLogin();
+					});
 				}
-
-				resolve();
-			});
+			}
+			resolve();
 		}
 	}, {
 		key: 'render_always_menu',
 		value: function render_always_menu() {
-			var _this15 = this;
+			var _this10 = this;
 
-			return new Promise(function (resolve, reject) {
-				var $menu = _this15.$view.find('.navbar-menu');
-				$menu.html('\n\t\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t\t<li class="dropdown">\n\t\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t\t\t<li role="separator" class="divider"></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</li>\n\t\t\t\t</ul>\n\t\t\t');
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-				var $dropDownMenu = $menu.find('ul.dropdown-menu').empty();
+			var $menu = this.$view.find('.navbar-menu');
+			$menu.html('\n\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t<li class="dropdown">\n\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t\t<li role="separator" class="divider"></li>\n\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t</ul>\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t');
 
-				if (_this15.menu != null) {
-					var _iteratorNormalCompletion = true;
-					var _didIteratorError = false;
-					var _iteratorError = undefined;
+			var $dropDownMenu = $menu.find('ul.dropdown-menu').empty();
 
+			if (this.menu != null) {
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
+
+				try {
+					var _loop = function _loop() {
+						var menu = _step.value;
+
+						var $menuItem = $('<li><a href="#">' + menu.title + '</a></li>');
+						$dropDownMenu.append($menuItem);
+						$menuItem.find('a').on('click', function (e) {
+							e.preventDefault();
+							if (menu.vc == null) {
+								menu.vc = new _this10.vcClasses[menu.vcClass]();
+							}
+							_this10.openVC(menu.vc);
+						});
+					};
+
+					for (var _iterator = this.menu[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						_loop();
+					}
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
+				} finally {
 					try {
-						var _loop = function _loop() {
-							var menu = _step.value;
-
-							var $menuItem = $('<li><a href="#">' + menu.title + '</a></li>');
-							$dropDownMenu.append($menuItem);
-							$menuItem.find('a').on('click', function (e) {
-								e.preventDefault();
-								if (menu.vc == null) {
-									menu.vc = new _this15.vcClasses[menu.vcClass]();
-								}
-								_this15.openVC(menu.vc);
-							});
-						};
-
-						for (var _iterator = _this15.menu[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-							_loop();
+						if (!_iteratorNormalCompletion && _iterator.return) {
+							_iterator.return();
 						}
-					} catch (err) {
-						_didIteratorError = true;
-						_iteratorError = err;
 					} finally {
-						try {
-							if (!_iteratorNormalCompletion && _iterator.return) {
-								_iterator.return();
-							}
-						} finally {
-							if (_didIteratorError) {
-								throw _iteratorError;
-							}
+						if (_didIteratorError) {
+							throw _iteratorError;
 						}
 					}
 				}
+			}
 
-				var vcs = _this15.vcs.filter(function (vc) {
-					return vc.title != null;
-				});
-
-				if (_this15.menu != null & _this15.menu.length > 0 && vcs != null && vcs.length > 0) {
-					$dropDownMenu.append($('<li role="separator" class="divider"></li>'));
-				}
-
-				if (vcs != null) {
-					var _iteratorNormalCompletion2 = true;
-					var _didIteratorError2 = false;
-					var _iteratorError2 = undefined;
-
-					try {
-						var _loop2 = function _loop2() {
-							var vc = _step2.value;
-
-							var $menuItem = $('<li><a href="#">' + (vc.title || 'Untitled') + '</a></li>');
-							$dropDownMenu.append($menuItem);
-							$menuItem.find('a').on('click', function (e) {
-								e.preventDefault();
-								_this15.openVC(vc);
-							});
-						};
-
-						for (var _iterator2 = vcs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-							_loop2();
-						}
-					} catch (err) {
-						_didIteratorError2 = true;
-						_iteratorError2 = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion2 && _iterator2.return) {
-								_iterator2.return();
-							}
-						} finally {
-							if (_didIteratorError2) {
-								throw _iteratorError2;
-							}
-						}
-					}
-				}
-
-				resolve();
+			var vcs = this.vcs.filter(function (vc) {
+				return vc.title != null;
 			});
+
+			if (this.menu != null & this.menu.length > 0 && vcs != null && vcs.length > 0) {
+				$dropDownMenu.append($('<li role="separator" class="divider"></li>'));
+			}
+
+			if (vcs != null) {
+				var _iteratorNormalCompletion2 = true;
+				var _didIteratorError2 = false;
+				var _iteratorError2 = undefined;
+
+				try {
+					var _loop2 = function _loop2() {
+						var vc = _step2.value;
+
+						var $menuItem = $('<li><a href="#">' + (vc.title || 'Untitled') + '</a></li>');
+						$dropDownMenu.append($menuItem);
+						$menuItem.find('a').on('click', function (e) {
+							e.preventDefault();
+							_this10.openVC(vc);
+						});
+					};
+
+					for (var _iterator2 = vcs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+						_loop2();
+					}
+				} catch (err) {
+					_didIteratorError2 = true;
+					_iteratorError2 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion2 && _iterator2.return) {
+							_iterator2.return();
+						}
+					} finally {
+						if (_didIteratorError2) {
+							throw _iteratorError2;
+						}
+					}
+				}
+			}
+
+			resolve();
 		}
 	}, {
 		key: 'render_always_vc',
 		value: function render_always_vc() {
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
 			if (this.vcs == null || this.vcs.length == 0) {
 				if (this.defaultVC.vc == null) {
 					this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
 				}
-				return this.openVC(this.defaultVC.vc);
+				this.openVC(this.defaultVC.vc, resolve, reject);
+			} else {
+				_get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always_vc', this).call(this, resolve, reject);
 			}
-
-			return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always_vc', this).call(this);
 		}
 	}, {
 		key: 'render_once',
 		value: function render_once() {
-			var _this16 = this;
+			var _this11 = this;
 
-			return new Promise(function (resolve, reject) {
-				if (_this16.cotLogin != null) {
-					_this16.cotLogin.options.onLogin = function () {
-						_this16.render();
-					};
-				}
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-				_this16.$view = $('\n\t\t\t\t<nav class="navbar navbar-default navvc">\n\t\t\t\t\t<div class="container-fluid">\n\t\t\t\t\t\t<div class="navbar-header">\n\t\t\t\t\t\t\t<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">\n\t\t\t\t\t\t\t\t<span class="sr-only">Toggle navigation</span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<span class="navbar-brand"></span>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">\n\t\t\t\t\t\t\t<div class="navbar-left">\n\t\t\t\t\t\t\t\t<div class="navbar-vc-ui"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class="navbar-right">\n\t\t\t\t\t\t\t\t<div class="navbar-menu"></div>\n\t\t\t\t\t\t\t\t<div class="navbar-login"></div>\n\t\t\t\t\t\t\t\t<div class="navbar-lock"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t\t\t<div class="requireLogin">\n\t\t\t\t\t<p>Please login.</p>\n\t\t\t\t</div>\n\t\t\t');
-				$('.navbar-lock', _this16.$view.filter('.navbar')).append($('.securesite > img'));
-				$('#app-content-top > div').append(_this16.$view);
+			if (this.cotLogin != null) {
+				this.cotLogin.options.onLogin = function () {
+					_this11.render();
+				};
+			}
 
-				resolve();
-			});
+			this.$view = $('\n\t\t\t<nav class="navbar navbar-default navvc">\n\t\t\t\t<div class="container-fluid">\n\t\t\t\t\t<div class="navbar-header">\n\t\t\t\t\t\t<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">\n\t\t\t\t\t\t\t<span class="sr-only">Toggle navigation</span>\n\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t</button>\n\t\t\t\t\t\t<span class="navbar-brand"></span>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">\n\t\t\t\t\t\t<div class="navbar-left">\n\t\t\t\t\t\t\t<div class="navbar-vc-ui"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class="navbar-right">\n\t\t\t\t\t\t\t<div class="navbar-menu"></div>\n\t\t\t\t\t\t\t<div class="navbar-login"></div>\n\t\t\t\t\t\t\t<div class="navbar-lock"></div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</nav>\n\t\t\t<div class="requireLogin">\n\t\t\t\t<p>Please login.</p>\n\t\t\t</div>\n\t\t');
+			$('.navbar-lock', this.$view.filter('.navbar')).append($('.securesite > img'));
+			$('#app-content-top > div').append(this.$view);
+
+			resolve();
 		}
 	}]);
 
