@@ -244,7 +244,7 @@ var VC = function() {
 				(_this8.renderedOnce != true ? function() {
 					_this8.renderedOnce = true;
 					return _this8.render_once();
-				} : Promise.resolve()).then(function() {
+				}() : Promise.resolve()).then(function() {
 					_this8.render_always().then(function() {
 						resolve();
 					}, function() {

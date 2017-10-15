@@ -109,10 +109,10 @@ class VC {
 	}
 	render() {
 		return new Promise((resolve, reject) => {
-			(this.renderedOnce != true ? () => {
+			(this.renderedOnce != true ? (() => {
 				this.renderedOnce = true;
 				return this.render_once();
-			} : Promise.resolve()).then(() => {
+			})() : Promise.resolve()).then(() => {
 				this.render_always().then(() => {
 					resolve();
 				}, () => {
