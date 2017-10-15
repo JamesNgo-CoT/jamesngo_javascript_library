@@ -213,11 +213,11 @@ class NavbarVC extends NavVC {
 	constructor() {
 		super();
 		this.$view = null;
-		ccotApp = null;
-		cotLogin = null;
-		defaultVC = null;
-		menu = null;
-		vcClasses = null;
+		this.cotApp = null;
+		this.cotLogin = null;
+		this.defaultVC = null;
+		this.menu = null;
+		this.vcClasses = null;
 	}
 	render_always(resolve = () => {}, reject = () => {}) {
 		this.$view.filter('.requireLogin').hide();

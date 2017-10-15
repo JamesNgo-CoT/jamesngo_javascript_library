@@ -366,11 +366,11 @@ var NavbarVC = function (_NavVC) {
 		var _this7 = _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).call(this));
 
 		_this7.$view = null;
-		ccotApp = null;
-		cotLogin = null;
-		defaultVC = null;
-		menu = null;
-		vcClasses = null;
+		_this7.cotApp = null;
+		_this7.cotLogin = null;
+		_this7.defaultVC = null;
+		_this7.menu = null;
+		_this7.vcClasses = null;
 		return _this7;
 	}
 
