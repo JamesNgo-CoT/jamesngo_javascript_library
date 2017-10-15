@@ -241,25 +241,15 @@ var VC = function() {
 			var _this8 = this;
 
 			return new Promise(function(resolve, reject) {
-				var promise = new Promise(function(resolve, reject) {
-					if (_this8.renderedOnce != true) {
-						_this8.renderedOnce = true;
-						_this8.render_once().then(function() {
-							resolve();
-						}, function() {
-							reject();
-						});
-					} else {
-						resolve();
-					}
-				}).then(function() {
+				(_this8.renderedOnce != true ? function() {
+					_this8.renderedOnce = true;
+					return _this8.render_once();
+				} : Promise.resolve()).then(function() {
 					_this8.render_always().then(function() {
 						resolve();
 					}, function() {
 						reject();
 					});
-				}, function() {
-					reject();
 				});
 			});
 		}
@@ -269,8 +259,8 @@ var VC = function() {
 			return Promise.resolve();
 		}
 	}, {
-		key: 'render_once',
-		value: function render_once() {
+		key: 'remove_once',
+		value: function remove_once() {
 			return Promise.resolve();
 		}
 	}]);
@@ -278,28 +268,16 @@ var VC = function() {
 	return VC;
 }();
 
-/**
- Navbar View Controller
- Properties:
- - $view
- - cotLogin
- - defaultVC
- - menu
- - vcClasses
- - vcs
- */
+var NavVC = function(_VC) {
+	_inherits(NavVC, _VC);
 
+	function NavVC() {
+		_classCallCheck(this, NavVC);
 
-var NavbarVC = function(_VC) {
-	_inherits(NavbarVC, _VC);
-
-	function NavbarVC() {
-		_classCallCheck(this, NavbarVC);
-
-		return _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).apply(this, arguments));
+		return _possibleConstructorReturn(this, (NavVC.__proto__ || Object.getPrototypeOf(NavVC)).apply(this, arguments));
 	}
 
-	_createClass(NavbarVC, [{
+	_createClass(NavVC, [{
 		key: 'closeVC',
 		value: function closeVC(vc) {
 			var _this10 = this;
@@ -326,15 +304,88 @@ var NavbarVC = function(_VC) {
 			});
 		}
 	}, {
+		key: 'openVC',
+		value: function openVC(vc) {
+			if (this.vcs == null) {
+				this.vcs = [];
+			}
+			var idx = this.vcs.indexOf(vc);
+			if (idx != -1) {
+				this.vcs.splice(idx, 1);
+			}
+			this.vcs.push(vc);
+			return this.render();
+		}
+	}, {
 		key: 'render_always',
 		value: function render_always() {
+			return this.render_always_vc();
+		}
+	}, {
+		key: 'render_always_vc',
+		value: function render_always_vc() {
 			var _this11 = this;
 
+			if (this.vcs == null || this.vcs.length == 0) {
+				return Promise.resolve();
+			}
+
 			return new Promise(function(resolve, reject) {
-				_this11.$view.filter('.requireLogin').hide();
-				Promise.all([_this11.render_always_login(), new Promise(function(resolve, reject) {
-					_this11.render_always_vc().then(function() {
-						_this11.render_always_menu().then(function() {
+				new Promise(function(resolve, reject) {
+					if (_this11.vcs.length > 1) {
+						_this11.vcs[_this11.vcs.length - 2].$view.fadeOut(function() {
+							resolve();
+						});
+					} else {
+						resolve();
+					}
+				}).then(function() {
+					var topVC = _this11.vcs[_this11.vcs.length - 1];
+					topVC.navbarVC = _this11;
+					topVC.render().then(function() {
+						topVC.$view.fadeIn(function() {
+							resolve();
+						});
+					});
+				});
+			});
+		}
+	}]);
+
+	return NavVC;
+}(VC);
+
+/**
+ Navbar View Controller
+ Properties:
+ - $view
+ - cotLogin
+ - defaultVC
+ - menu
+ - vcClasses
+ - vcs
+ */
+
+
+var NavbarVC = function(_NavVC) {
+	_inherits(NavbarVC, _NavVC);
+
+	function NavbarVC() {
+		_classCallCheck(this, NavbarVC);
+
+		return _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).apply(this, arguments));
+	}
+
+	_createClass(NavbarVC, [{
+		key: 'render_always',
+		value: function render_always() {
+			var _this13 = this;
+
+			return new Promise(function(resolve, reject) {
+				_this13.$view.filter('.requireLogin').hide();
+				Promise.all([_this13.render_always_login(), new Promise(function(resolve, reject) {
+					_this13.render_always_vc().then(function() {
+						_this13.render_always_menu().then(function() {
 							resolve();
 						});
 					});
@@ -348,22 +399,22 @@ var NavbarVC = function(_VC) {
 	}, {
 		key: 'render_always_login',
 		value: function render_always_login() {
-			var _this12 = this;
+			var _this14 = this;
 
 			return new Promise(function(resolve, reject) {
-				var $login = _this12.$view.find('.navbar-login').empty();
-				if (_this12.cotLogin == null) {
+				var $login = _this14.$view.find('.navbar-login').empty();
+				if (_this14.cotLogin == null) {
 					// No UI
 				} else {
-					if (_this12.cotLogin.isLoggedIn()) {
-						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<p class="form-control-static">' + _this12.cotLogin.username + '</p>\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-logout').on('click', function(e) {
+					if (_this14.cotLogin.isLoggedIn()) {
+						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<p class="form-control-static">' + _this14.cotLogin.username + '</p>\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-logout').on('click', function(e) {
 							e.preventDefault();
-							_this12.cotLogin.logout();
+							_this14.cotLogin.logout();
 						});
 					} else {
 						$login.append('\n\t\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t\t\t</form>\n\t\t\t\t\t\t').find('.btn-login').on('click', function(e) {
 							e.preventDefault();
-							_this12.cotLogin.showLogin();
+							_this14.cotLogin.showLogin();
 						});
 					}
 				}
@@ -374,15 +425,15 @@ var NavbarVC = function(_VC) {
 	}, {
 		key: 'render_always_menu',
 		value: function render_always_menu() {
-			var _this13 = this;
+			var _this15 = this;
 
 			return new Promise(function(resolve, reject) {
-				var $menu = _this13.$view.find('.navbar-menu');
+				var $menu = _this15.$view.find('.navbar-menu');
 				$menu.html('\n\t\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t\t<li class="dropdown">\n\t\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t\t\t<li role="separator" class="divider"></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t</ul>\n\t\t\t\t\t</li>\n\t\t\t\t</ul>\n\t\t\t');
 
 				var $dropDownMenu = $menu.find('ul.dropdown-menu').empty();
 
-				if (_this13.menu != null) {
+				if (_this15.menu != null) {
 					var _iteratorNormalCompletion = true;
 					var _didIteratorError = false;
 					var _iteratorError = undefined;
@@ -396,13 +447,13 @@ var NavbarVC = function(_VC) {
 							$menuItem.find('a').on('click', function(e) {
 								e.preventDefault();
 								if (menu.vc == null) {
-									menu.vc = new _this13.vcClasses[menu.vcClass]();
+									menu.vc = new _this15.vcClasses[menu.vcClass]();
 								}
-								_this13.openVC(menu.vc);
+								_this15.openVC(menu.vc);
 							});
 						};
 
-						for (var _iterator = _this13.menu[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						for (var _iterator = _this15.menu[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 							_loop();
 						}
 					} catch (err) {
@@ -421,11 +472,11 @@ var NavbarVC = function(_VC) {
 					}
 				}
 
-				var vcs = _this13.vcs.filter(function(vc) {
+				var vcs = _this15.vcs.filter(function(vc) {
 					return vc.title != null;
 				});
 
-				if (_this13.menu != null & _this13.menu.length > 0 && vcs != null && vcs.length > 0) {
+				if (_this15.menu != null & _this15.menu.length > 0 && vcs != null && vcs.length > 0) {
 					$dropDownMenu.append($('<li role="separator" class="divider"></li>'));
 				}
 
@@ -442,7 +493,7 @@ var NavbarVC = function(_VC) {
 							$dropDownMenu.append($menuItem);
 							$menuItem.find('a').on('click', function(e) {
 								e.preventDefault();
-								_this13.openVC(vc);
+								_this15.openVC(vc);
 							});
 						};
 
@@ -471,68 +522,35 @@ var NavbarVC = function(_VC) {
 	}, {
 		key: 'render_always_vc',
 		value: function render_always_vc() {
-			var _this14 = this;
-
 			if (this.vcs == null || this.vcs.length == 0) {
 				if (this.defaultVC.vc == null) {
 					this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
 				}
 				return this.openVC(this.defaultVC.vc);
-			} else {
-				return new Promise(function(resolve, reject) {
-					new Promise(function(resolve, reject) {
-						if (_this14.vcs.length > 1) {
-							_this14.vcs[_this14.vcs.length - 2].$view.fadeOut(function() {
-								resolve();
-							});
-						} else {
-							resolve();
-						}
-					}).then(function() {
-						var topVC = _this14.vcs[_this14.vcs.length - 1];
-						topVC.navbarVC = _this14;
-						topVC.render().then(function() {
-							topVC.$view.fadeIn(function() {
-								resolve();
-							});
-						});
-					});
-				});
 			}
+
+			return this.super.render_always_vc();
 		}
 	}, {
 		key: 'render_once',
 		value: function render_once() {
-			var _this15 = this;
+			var _this16 = this;
 
 			return new Promise(function(resolve, reject) {
-				if (_this15.cotLogin != null) {
-					_this15.cotLogin.options.onLogin = function() {
-						_this15.render();
+				if (_this16.cotLogin != null) {
+					_this16.cotLogin.options.onLogin = function() {
+						_this16.render();
 					};
 				}
 
-				_this15.$view = $('\n\t\t\t\t<nav class="navbar navbar-default navvc">\n\t\t\t\t\t<div class="container-fluid">\n\t\t\t\t\t\t<div class="navbar-header">\n\t\t\t\t\t\t\t<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">\n\t\t\t\t\t\t\t\t<span class="sr-only">Toggle navigation</span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<span class="navbar-brand"></span>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">\n\t\t\t\t\t\t\t<div class="navbar-left">\n\t\t\t\t\t\t\t\t<div class="navbar-vc-ui"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class="navbar-right">\n\t\t\t\t\t\t\t\t<div class="navbar-menu"></div>\n\t\t\t\t\t\t\t\t<div class="navbar-login"></div>\n\t\t\t\t\t\t\t\t<div class="navbar-lock"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t\t\t<div class="requireLogin">\n\t\t\t\t\t<p>Please login.</p>\n\t\t\t\t</div>\n\t\t\t');
-				$('.navbar-lock', _this15.$view.filter('.navbar')).append($('.securesite > img'));
-				$('#app-content-top > div').append(_this15.$view);
+				_this16.$view = $('\n\t\t\t\t<nav class="navbar navbar-default navvc">\n\t\t\t\t\t<div class="container-fluid">\n\t\t\t\t\t\t<div class="navbar-header">\n\t\t\t\t\t\t\t<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">\n\t\t\t\t\t\t\t\t<span class="sr-only">Toggle navigation</span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<span class="navbar-brand"></span>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">\n\t\t\t\t\t\t\t<div class="navbar-left">\n\t\t\t\t\t\t\t\t<div class="navbar-vc-ui"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class="navbar-right">\n\t\t\t\t\t\t\t\t<div class="navbar-menu"></div>\n\t\t\t\t\t\t\t\t<div class="navbar-login"></div>\n\t\t\t\t\t\t\t\t<div class="navbar-lock"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t\t\t<div class="requireLogin">\n\t\t\t\t\t<p>Please login.</p>\n\t\t\t\t</div>\n\t\t\t');
+				$('.navbar-lock', _this16.$view.filter('.navbar')).append($('.securesite > img'));
+				$('#app-content-top > div').append(_this16.$view);
 
 				resolve();
 			});
 		}
-	}, {
-		key: 'openVC',
-		value: function openVC(vc) {
-			if (this.vcs == null) {
-				this.vcs = [];
-			}
-			var idx = this.vcs.indexOf(vc);
-			if (idx != -1) {
-				this.vcs.splice(idx, 1);
-			}
-			this.vcs.push(vc);
-			return this.render();
-		}
 	}]);
 
 	return NavbarVC;
-}(VC);
+}(NavVC);

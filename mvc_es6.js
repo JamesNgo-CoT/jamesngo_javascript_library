@@ -109,47 +109,27 @@ class VC {
 	}
 	render() {
 		return new Promise((resolve, reject) => {
-			const promise = new Promise((resolve, reject) => {
-				if (this.renderedOnce != true) {
-					this.renderedOnce = true;
-					this.render_once().then(() => {
-						resolve();
-					}, () => {
-						reject();
-					});
-				} else {
-					resolve();
-				}
-			}).then(() => {
+			(this.renderedOnce != true ? () => {
+				this.renderedOnce = true;
+				return this.render_once();
+			} : Promise.resolve()).then(() => {
 				this.render_always().then(() => {
 					resolve();
 				}, () => {
 					reject();
 				});
-			}, () => {
-				reject();
 			});
 		});
 	}
 	render_always() {
 		return Promise.resolve();
 	}
-	render_once() {
+	remove_once() {
 		return Promise.resolve();
 	}
 }
 
-/**
- Navbar View Controller
- Properties:
- - $view
- - cotLogin
- - defaultVC
- - menu
- - vcClasses
- - vcs
- */
-class NavbarVC extends VC {
+class NavVC extends VC {
 	closeVC(vc) {
 		return new Promise((resolve, reject) => {
 			if (this.vcs != null && this.vcs.length > 0 && this.vcs[this.vcs.length - 1] == vc) {
@@ -172,6 +152,59 @@ class NavbarVC extends VC {
 			});
 		});
 	}
+	openVC(vc) {
+		if (this.vcs == null) {
+			this.vcs = [];
+		}
+		const idx = this.vcs.indexOf(vc);
+		if (idx != -1) {
+			this.vcs.splice(idx, 1);
+		}
+		this.vcs.push(vc);
+		return this.render();
+	}
+	render_always() {
+		return this.render_always_vc();
+	}
+	render_always_vc() {
+		if (this.vcs == null || this.vcs.length == 0) {
+			return Promise.resolve();
+		}
+
+		return new Promise((resolve, reject) => {
+			(new Promise((resolve, reject) => {
+				if (this.vcs.length > 1) {
+					this.vcs[this.vcs.length - 2].$view.fadeOut(() => {
+						resolve();
+					});
+				} else {
+					resolve();
+				}
+			})).then(() => {
+				const topVC = this.vcs[this.vcs.length - 1];
+				topVC.navbarVC = this;
+				topVC.render().then(() => {
+					topVC.$view.fadeIn(() => {
+						resolve();
+					});
+				});
+			});
+		})
+		;
+	}
+}
+
+/**
+ Navbar View Controller
+ Properties:
+ - $view
+ - cotLogin
+ - defaultVC
+ - menu
+ - vcClasses
+ - vcs
+ */
+class NavbarVC extends NavVC {
 	render_always() {
 		return new Promise((resolve, reject) => {
 			this.$view.filter('.requireLogin').hide();
@@ -282,27 +315,9 @@ class NavbarVC extends VC {
 				this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
 			}
 			return this.openVC(this.defaultVC.vc);
-		} else {
-			return new Promise((resolve, reject) => {
-				(new Promise((resolve, reject) => {
-					if (this.vcs.length > 1) {
-						this.vcs[this.vcs.length - 2].$view.fadeOut(() => {
-							resolve();
-						});
-					} else {
-						resolve();
-					}
-				})).then(() => {
-					const topVC = this.vcs[this.vcs.length - 1];
-					topVC.navbarVC = this;
-					topVC.render().then(() => {
-						topVC.$view.fadeIn(() => {
-							resolve();
-						});
-					});
-				});
-			});
 		}
+
+		return this.super.render_always_vc();
 	}
 	render_once() {
 		return new Promise((resolve, reject) => {
@@ -345,16 +360,5 @@ class NavbarVC extends VC {
 
 			resolve();
 		});
-	}
-	openVC(vc) {
-		if (this.vcs == null) {
-			this.vcs = [];
-		}
-		const idx = this.vcs.indexOf(vc);
-		if (idx != -1) {
-			this.vcs.splice(idx, 1);
-		}
-		this.vcs.push(vc);
-		return this.render();
 	}
 }
