@@ -211,7 +211,7 @@ var VC = function () {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* VC - REMOVE');
+			console.log('* VC - REMOVE', this);
 			resolve();
 		}
 	}, {
@@ -222,7 +222,7 @@ var VC = function () {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* VC - RENDER');
+			console.log('* VC - RENDER', this);
 
 			// STEP 2
 			var step2 = function step2() {
@@ -243,7 +243,7 @@ var VC = function () {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* VC - RENDER ALWAYS');
+			console.log('* VC - RENDER ALWAYS', this);
 			resolve();
 		}
 	}, {
@@ -252,7 +252,7 @@ var VC = function () {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* VC - RENDER ONCE');
+			console.log('* VC - RENDER ONCE', this);
 			resolve();
 		}
 	}]);
@@ -282,7 +282,7 @@ var NavVC = function (_VC) {
 			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-			console.log('* NAV VC - CLOSE VC');
+			console.log('* NAV VC - CLOSE VC', this);
 
 			if (this.vcs != null && this.vcs.length > 0 && this.vcs[this.vcs.length - 1] == vc) {
 				this.vcs.pop();
@@ -307,7 +307,7 @@ var NavVC = function (_VC) {
 			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-			console.log('* NAV VC - OPEN VC');
+			console.log('* NAV VC - OPEN VC', this);
 
 			if (this.vcs == null) {
 				this.vcs = [];
@@ -325,7 +325,7 @@ var NavVC = function (_VC) {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* NAV VC - RENDER ALWAYS');
+			console.log('* NAV VC - RENDER ALWAYS', this);
 
 			this.render_always_vc(resolve, reject);
 		}
@@ -337,7 +337,7 @@ var NavVC = function (_VC) {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* NAV VC - RENDER ALWAYS VC');
+			console.log('* NAV VC - RENDER ALWAYS VC', this);
 
 			// STEP 2
 			var step2 = function step2() {
@@ -400,7 +400,7 @@ var NavbarVC = function (_NavVC) {
 			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-			console.log('* NAVBAR VC - CLOSE VC');
+			console.log('* NAVBAR VC - CLOSE VC', this);
 
 			var _iteratorNormalCompletion = true;
 			var _didIteratorError = false;
@@ -444,7 +444,7 @@ var NavbarVC = function (_NavVC) {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* NAVBAR VC - RENDER ALWAYS');
+			console.log('* NAVBAR VC - RENDER ALWAYS', this);
 
 			this.$view.filter('.requireLogin').hide();
 			this.render_always_login(function () {
@@ -463,7 +463,7 @@ var NavbarVC = function (_NavVC) {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* NAVBAR VC - RENDER ALWAYS LOGIN');
+			console.log('* NAVBAR VC - RENDER ALWAYS LOGIN', this);
 
 			var $login = this.$view.find('.navbar-login').empty();
 			if (this.cotLogin == null) {
@@ -491,7 +491,7 @@ var NavbarVC = function (_NavVC) {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* NAVBAR VC - RENDER ALWAYS MENU');
+			console.log('* NAVBAR VC - RENDER ALWAYS MENU', this);
 
 			var $menu = this.$view.find('.navbar-menu');
 			$menu.html('\n\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t<li class="dropdown">\n\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t</ul>\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t');
@@ -592,7 +592,7 @@ var NavbarVC = function (_NavVC) {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* NAVBAR VC - RENDER ALWAYS VC');
+			console.log('* NAVBAR VC - RENDER ALWAYS VC', this);
 			if (this.vcs == null || this.vcs.length == 0) {
 				console.log('RENDER ALWAYS VC NULL');
 				if (this.defaultVC.vc == null) {
@@ -615,7 +615,7 @@ var NavbarVC = function (_NavVC) {
 			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-			console.log('* NAVBAR VC - RENDER ONCE');
+			console.log('* NAVBAR VC - RENDER ONCE', this);
 
 			if (this.cotLogin != null) {
 				this.cotLogin.options.onLogin = function () {

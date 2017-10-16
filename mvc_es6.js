@@ -115,11 +115,11 @@ class VC {
 		this.renderedOnce = null;
 	}
 	remove(resolve = () => {}, reject = () => {}) {
-		console.log('* VC - REMOVE');
+		console.log('* VC - REMOVE', this);
 		resolve();
 	}
 	render(resolve = () => {}, reject = () => {}) {
-		console.log('* VC - RENDER');
+		console.log('* VC - RENDER', this);
 
 		// STEP 2
 		const step2 = () => {
@@ -135,11 +135,11 @@ class VC {
 		}
 	}
 	render_always(resolve = () => {}, reject = () => {}) {
-		console.log('* VC - RENDER ALWAYS');
+		console.log('* VC - RENDER ALWAYS', this);
 		resolve();
 	}
 	render_once(resolve = () => {}, reject = () => {}) {
-		console.log('* VC - RENDER ONCE');
+		console.log('* VC - RENDER ONCE', this);
 		resolve();
 	}
 }
@@ -151,7 +151,7 @@ class NavVC extends VC {
 		this.vcs = null;
 	}
 	closeVC(vc, resolve = () => {}, reject = () => {}) {
-		console.log('* NAV VC - CLOSE VC');
+		console.log('* NAV VC - CLOSE VC', this);
 
 		if (this.vcs != null && this.vcs.length > 0 && this.vcs[this.vcs.length - 1] == vc) {
 			this.vcs.pop();
@@ -171,7 +171,7 @@ class NavVC extends VC {
 		}, reject);
 	}
 	openVC(vc, resolve = () => {}, reject = () => {}) {
-		console.log('* NAV VC - OPEN VC');
+		console.log('* NAV VC - OPEN VC', this);
 
 		if (this.vcs == null) {
 			this.vcs = [];
@@ -184,12 +184,12 @@ class NavVC extends VC {
 		this.render(resolve, reject);
 	}
 	render_always(resolve = () => {}, reject = () => {}) {
-		console.log('* NAV VC - RENDER ALWAYS');
+		console.log('* NAV VC - RENDER ALWAYS', this);
 
 		this.render_always_vc(resolve, reject);
 	}
 	render_always_vc(resolve = () => {}, reject = () => {}) {
-		console.log('* NAV VC - RENDER ALWAYS VC');
+		console.log('* NAV VC - RENDER ALWAYS VC', this);
 
 		// STEP 2
 		const step2 = () => {
@@ -235,7 +235,7 @@ class NavbarVC extends NavVC {
 		this.vcClasses = null;
 	}
 	closeVC(vc, resolve = () => {}, reject = () => {}) {
-		console.log('* NAVBAR VC - CLOSE VC');
+		console.log('* NAVBAR VC - CLOSE VC', this);
 
 		for (const menu of this.menu) {
 			console.log('CHECK MENU VC', menu.vc, vc)
@@ -250,7 +250,7 @@ class NavbarVC extends NavVC {
 		super.closeVC(vc, resolve, reject);
 	}
 	render_always(resolve = () => {}, reject = () => {}) {
-		console.log('* NAVBAR VC - RENDER ALWAYS');
+		console.log('* NAVBAR VC - RENDER ALWAYS', this);
 
 		this.$view.filter('.requireLogin').hide();
 		this.render_always_login(() => {
@@ -262,7 +262,7 @@ class NavbarVC extends NavVC {
 		}, reject);
 	}
 	render_always_login(resolve = () => {}, reject = () => {}) {
-		console.log('* NAVBAR VC - RENDER ALWAYS LOGIN');
+		console.log('* NAVBAR VC - RENDER ALWAYS LOGIN', this);
 
 		const $login = this.$view.find('.navbar-login').empty();
 		if (this.cotLogin == null) {
@@ -292,7 +292,7 @@ class NavbarVC extends NavVC {
 		resolve();
 	}
 	render_always_menu(resolve = () => {}, reject = () => {}) {
-		console.log('* NAVBAR VC - RENDER ALWAYS MENU');
+		console.log('* NAVBAR VC - RENDER ALWAYS MENU', this);
 
 		const $menu = this.$view.find('.navbar-menu');
 		$menu.html(`
@@ -344,7 +344,7 @@ class NavbarVC extends NavVC {
 		resolve();
 	}
 	render_always_vc(resolve = () => {}, reject = () => {}) {
-		console.log('* NAVBAR VC - RENDER ALWAYS VC');
+		console.log('* NAVBAR VC - RENDER ALWAYS VC', this);
 		if (this.vcs == null || this.vcs.length == 0) {
 			console.log('RENDER ALWAYS VC NULL');
 			if (this.defaultVC.vc == null) {
@@ -358,7 +358,7 @@ class NavbarVC extends NavVC {
 		}
 	}
 	render_once(resolve = () => {}, reject = () => {}) {
-		console.log('* NAVBAR VC - RENDER ONCE');
+		console.log('* NAVBAR VC - RENDER ONCE', this);
 
 		if (this.cotLogin != null) {
 			this.cotLogin.options.onLogin = () => {
