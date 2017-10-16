@@ -324,12 +324,14 @@ class NavbarVC extends NavVC {
 	render_always_vc(resolve = () => {}, reject = () => {}) {
 		console.log('RENDER ALWAYS VC');
 		if (this.vcs == null || this.vcs.length == 0) {
+			console.log('RENDER ALWAYS VC NULL');
 			if (this.defaultVC.vc == null) {
 				this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
 				this.defaultVC.vc.options = this.defaultVC.vcOptions;
 			}
 			this.openVC(this.defaultVC.vc, resolve, reject);
 		} else {
+			console.log('RENDER ALWAYS VC NOT NULL')
 			super.render_always_vc(resolve, reject);
 		}
 	}
