@@ -270,11 +270,6 @@ class NavbarVC extends NavVC {
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						<li role="separator" class="divider"></li>
-						<li><a href="#">Dynamic Item</a></li>
-						<li><a href="#">Dynamic Item</a></li>
-						<li><a href="#">Dynamic Item</a></li>
-						<li><a href="#">Dynamic Item</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -288,6 +283,8 @@ class NavbarVC extends NavVC {
 				$dropDownMenu.append($menuItem);
 				$menuItem.find('a').on('click', (e) => {
 					e.preventDefault();
+					console.log('MENU CLICK');
+					console.log('MENU VC', menu.vc);
 					if (menu.vc == null) {
 						menu.vc = new this.vcClasses[menu.vcClass]();
 						menu.vc.options = menu.vcOptions;

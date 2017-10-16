@@ -462,7 +462,7 @@ var NavbarVC = function (_NavVC) {
 			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			var $menu = this.$view.find('.navbar-menu');
-			$menu.html('\n\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t<li class="dropdown">\n\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t\t<li role="separator" class="divider"></li>\n\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t\t<li><a href="#">Dynamic Item</a></li>\n\t\t\t\t\t</ul>\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t');
+			$menu.html('\n\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t<li class="dropdown">\n\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t</ul>\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t');
 
 			var $dropDownMenu = $menu.find('ul.dropdown-menu').empty();
 
@@ -479,6 +479,8 @@ var NavbarVC = function (_NavVC) {
 						$dropDownMenu.append($menuItem);
 						$menuItem.find('a').on('click', function (e) {
 							e.preventDefault();
+							console.log('MENU CLICK');
+							console.log('MENU VC', menu.vc);
 							if (menu.vc == null) {
 								menu.vc = new _this12.vcClasses[menu.vcClass]();
 								menu.vc.options = menu.vcOptions;
