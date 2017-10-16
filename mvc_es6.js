@@ -322,6 +322,7 @@ class NavbarVC extends NavVC {
 		resolve();
 	}
 	render_always_vc(resolve = () => {}, reject = () => {}) {
+		console.log('RENDER ALWAYS VC');
 		if (this.vcs == null || this.vcs.length == 0) {
 			if (this.defaultVC.vc == null) {
 				this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
