@@ -220,10 +220,16 @@ class NavbarVC extends NavVC {
 		this.vcClasses = null;
 	}
 	closeVC(vc, resolve = () => {}, reject = () => {}) {
+		console.log('CLOSE VC');
 		for (const menu of this.menu) {
+			console.log('CHECK MENU VC', menu.vc, vc)
 			if (menu.vc === vc) {
 				menu.vc = null;
 			}
+		}
+		console.log('CHECK DEFAULT VC', this.defaultVC.vc, vc);
+		if (this.defaultVC.vc == vc) {
+			this.defaultVC.vc = null;
 		}
 		super.closeVC(vc, resolve, reject);
 	}
@@ -264,6 +270,8 @@ class NavbarVC extends NavVC {
 		resolve();
 	}
 	render_always_menu(resolve = () => {}, reject = () => {}) {
+		console.log('RENDER_ALWAYS_MENU');
+
 		const $menu = this.$view.find('.navbar-menu');
 		$menu.html(`
 			<ul class="nav navbar-nav">
