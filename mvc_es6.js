@@ -282,6 +282,7 @@ class NavbarVC extends NavVC {
 					e.preventDefault();
 					if (menu.vc == null) {
 						menu.vc = new this.vcClasses[menu.vcClass]();
+						menu.vc.options = menu.vcOptions;
 					}
 					this.openVC(menu.vc);
 				});
@@ -311,6 +312,7 @@ class NavbarVC extends NavVC {
 		if (this.vcs == null || this.vcs.length == 0) {
 			if (this.defaultVC.vc == null) {
 				this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
+				this.defaultVC.vc.options = this.defaultVC.vcOptions;
 			}
 			this.openVC(this.defaultVC.vc, resolve, reject);
 		} else {

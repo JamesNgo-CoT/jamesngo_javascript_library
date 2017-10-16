@@ -447,6 +447,7 @@ var NavbarVC = function (_NavVC) {
 							e.preventDefault();
 							if (menu.vc == null) {
 								menu.vc = new _this12.vcClasses[menu.vcClass]();
+								menu.vc.options = menu.vcOptions;
 							}
 							_this12.openVC(menu.vc);
 						});
@@ -526,6 +527,7 @@ var NavbarVC = function (_NavVC) {
 			if (this.vcs == null || this.vcs.length == 0) {
 				if (this.defaultVC.vc == null) {
 					this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
+					this.defaultVC.vc.options = this.defaultVC.vcOptions;
 				}
 				this.openVC(this.defaultVC.vc, resolve, reject);
 			} else {
