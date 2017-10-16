@@ -249,8 +249,10 @@ class NavbarVC extends NavVC {
 
 		this.$view.filter('.requireLogin').hide();
 		this.render_always_login(() => {
-			this.render_always_vc(() => {
-				this.render_always_menu(resolve, reject);
+			this.render_always_vc((renderMenu) => {
+				if (renderMenu != false) {
+					this.render_always_menu(resolve, reject);
+				}
 			}, reject);
 		}, reject);
 	}
@@ -344,7 +346,7 @@ class NavbarVC extends NavVC {
 				this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
 				this.defaultVC.vc.options = this.defaultVC.vcOptions;
 			}
-			this.openVC(this.defaultVC.vc, resolve, reject);
+			this.openVC(this.defaultVC.vc, () => { resolve(false); }, reject);
 		} else {
 			console.log('RENDER ALWAYS VC NOT NULL');
 			super.render_always_vc(resolve, reject);
@@ -376,9 +378,9 @@ class NavbarVC extends NavVC {
 							<div class="navbar-vc-ui"></div>
 						</div>
 						<div class="navbar-right">
-							<div class="navbar-menu"></div>
-							<div class="navbar-login"></div>
-							<div class="navbar-lock"></div>
+							<div class="nav navbar-nav navbar-menu"></div>
+							<div class="nav navbar-nav navbar-login"></div>
+							<div class="nav navbar-nav navbar-lock"></div>
 						</div>
 					</div>
 				</div>
