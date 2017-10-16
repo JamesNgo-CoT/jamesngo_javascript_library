@@ -219,6 +219,14 @@ class NavbarVC extends NavVC {
 		this.menu = null;
 		this.vcClasses = null;
 	}
+	closeVC(vc, resolve = () => {}, reject = () => {}) {
+		for (const menu of this.menu) {
+			if (menu.vc === vc) {
+				menu.vc = null;
+			}
+		}
+		super.closeVC(vc, resolve, reject);
+	}
 	render_always(resolve = () => {}, reject = () => {}) {
 		this.$view.filter('.requireLogin').hide();
 		this.render_always_login(() => {

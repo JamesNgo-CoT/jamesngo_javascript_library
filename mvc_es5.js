@@ -379,6 +379,40 @@ var NavbarVC = function (_NavVC) {
 	}
 
 	_createClass(NavbarVC, [{
+		key: 'closeVC',
+		value: function closeVC(vc) {
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = this.menu[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var menu = _step.value;
+
+					if (menu.vc === vc) {
+						menu.vc = null;
+					}
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator.return) {
+						_iterator.return();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
+			}
+
+			_get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'closeVC', this).call(this, vc, resolve, reject);
+		}
+	}, {
 		key: 'render_always',
 		value: function render_always() {
 			var _this10 = this;
@@ -433,13 +467,13 @@ var NavbarVC = function (_NavVC) {
 			var $dropDownMenu = $menu.find('ul.dropdown-menu').empty();
 
 			if (this.menu != null) {
-				var _iteratorNormalCompletion = true;
-				var _didIteratorError = false;
-				var _iteratorError = undefined;
+				var _iteratorNormalCompletion2 = true;
+				var _didIteratorError2 = false;
+				var _iteratorError2 = undefined;
 
 				try {
 					var _loop = function _loop() {
-						var menu = _step.value;
+						var menu = _step2.value;
 
 						var $menuItem = $('<li><a href="#">' + menu.title + '</a></li>');
 						$dropDownMenu.append($menuItem);
@@ -453,20 +487,20 @@ var NavbarVC = function (_NavVC) {
 						});
 					};
 
-					for (var _iterator = this.menu[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					for (var _iterator2 = this.menu[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
 						_loop();
 					}
 				} catch (err) {
-					_didIteratorError = true;
-					_iteratorError = err;
+					_didIteratorError2 = true;
+					_iteratorError2 = err;
 				} finally {
 					try {
-						if (!_iteratorNormalCompletion && _iterator.return) {
-							_iterator.return();
+						if (!_iteratorNormalCompletion2 && _iterator2.return) {
+							_iterator2.return();
 						}
 					} finally {
-						if (_didIteratorError) {
-							throw _iteratorError;
+						if (_didIteratorError2) {
+							throw _iteratorError2;
 						}
 					}
 				}
@@ -481,13 +515,13 @@ var NavbarVC = function (_NavVC) {
 			}
 
 			if (vcs != null) {
-				var _iteratorNormalCompletion2 = true;
-				var _didIteratorError2 = false;
-				var _iteratorError2 = undefined;
+				var _iteratorNormalCompletion3 = true;
+				var _didIteratorError3 = false;
+				var _iteratorError3 = undefined;
 
 				try {
 					var _loop2 = function _loop2() {
-						var vc = _step2.value;
+						var vc = _step3.value;
 
 						var $menuItem = $('<li><a href="#">' + (vc.title || 'Untitled') + '</a></li>');
 						$dropDownMenu.append($menuItem);
@@ -497,20 +531,20 @@ var NavbarVC = function (_NavVC) {
 						});
 					};
 
-					for (var _iterator2 = vcs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+					for (var _iterator3 = vcs[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
 						_loop2();
 					}
 				} catch (err) {
-					_didIteratorError2 = true;
-					_iteratorError2 = err;
+					_didIteratorError3 = true;
+					_iteratorError3 = err;
 				} finally {
 					try {
-						if (!_iteratorNormalCompletion2 && _iterator2.return) {
-							_iterator2.return();
+						if (!_iteratorNormalCompletion3 && _iterator3.return) {
+							_iterator3.return();
 						}
 					} finally {
-						if (_didIteratorError2) {
-							throw _iteratorError2;
+						if (_didIteratorError3) {
+							throw _iteratorError3;
 						}
 					}
 				}
