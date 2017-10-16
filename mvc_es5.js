@@ -1,70 +1,14 @@
 'use strict';
 
-var _get = function get(object, property, receiver) {
-	if (object === null) object = Function.prototype;
-	var desc = Object.getOwnPropertyDescriptor(object, property);
-	if (desc === undefined) {
-		var parent = Object.getPrototypeOf(object);
-		if (parent === null) {
-			return undefined;
-		} else {
-			return get(parent, property, receiver);
-		}
-	} else if ("value" in desc) {
-		return desc.value;
-	} else {
-		var getter = desc.get;
-		if (getter === undefined) {
-			return undefined;
-		}
-		return getter.call(receiver);
-	}
-};
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _createClass = function() {
-	function defineProperties(target, props) {
-		for (var i = 0; i < props.length; i++) {
-			var descriptor = props[i];
-			descriptor.enumerable = descriptor.enumerable || false;
-			descriptor.configurable = true;
-			if ("value" in descriptor) descriptor.writable = true;
-			Object.defineProperty(target, descriptor.key, descriptor);
-		}
-	}
-	return function(Constructor, protoProps, staticProps) {
-		if (protoProps) defineProperties(Constructor.prototype, protoProps);
-		if (staticProps) defineProperties(Constructor, staticProps);
-		return Constructor;
-	};
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _possibleConstructorReturn(self, call) {
-	if (!self) {
-		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	}
-	return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) {
-	if (typeof superClass !== "function" && superClass !== null) {
-		throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-	}
-	subClass.prototype = Object.create(superClass && superClass.prototype, {
-		constructor: {
-			value: subClass,
-			enumerable: false,
-			writable: true,
-			configurable: true
-		}
-	});
-	if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-function _classCallCheck(instance, Constructor) {
-	if (!(instance instanceof Constructor)) {
-		throw new TypeError("Cannot call a class as a function");
-	}
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  Model Controller
@@ -72,7 +16,7 @@ function _classCallCheck(instance, Constructor) {
  - model
  - url
  */
-var MC = function() {
+var MC = function () {
 	function MC() {
 		_classCallCheck(this, MC);
 
@@ -83,8 +27,8 @@ var MC = function() {
 	_createClass(MC, [{
 		key: 'httpDelete',
 		value: function httpDelete() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			this.model = {
 				id: this.model.id,
@@ -95,8 +39,8 @@ var MC = function() {
 	}, {
 		key: 'httpGet',
 		value: function httpGet(id) {
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function() {};
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
 			$.ajax(this.url + '(\'' + id + '\')', {
 				error: function error(jqXHR, textStatus, errorThrown) {
@@ -111,8 +55,8 @@ var MC = function() {
 	}, {
 		key: 'httpPatch',
 		value: function httpPatch() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			$.ajax(this.url + '(\'' + this.model.id + '\')', {
 				data: JSON.stringify(this.model),
@@ -130,8 +74,8 @@ var MC = function() {
 		value: function httpPost() {
 			var _this = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			this.model.id = null;
 			$.ajax(this.url, {
@@ -149,8 +93,8 @@ var MC = function() {
 	}, {
 		key: 'httpPut',
 		value: function httpPut() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			$.ajax(this.url + '(\'' + this.model.id + '\')', {
 				data: JSON.stringify(this.model),
@@ -175,7 +119,7 @@ var MC = function() {
  */
 
 
-var CotModelMC = function(_MC) {
+var CotModelMC = function (_MC) {
 	_inherits(CotModelMC, _MC);
 
 	function CotModelMC() {
@@ -190,8 +134,8 @@ var CotModelMC = function(_MC) {
 	_createClass(CotModelMC, [{
 		key: 'httpDelete',
 		value: function httpDelete() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			this.model = this.cotModel.toJSON();
 			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpDelete', this).call(this, resolve, reject);
@@ -201,10 +145,10 @@ var CotModelMC = function(_MC) {
 		value: function httpGet(id) {
 			var _this3 = this;
 
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function() {};
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpGet', this).call(this, id, function(data, textStatus, jqXHR) {
+			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpGet', this).call(this, id, function (data, textStatus, jqXHR) {
 				_this3._cotModel.set(_this3.model);
 				resolve(data, textStatus, jqXHR);
 			}, reject);
@@ -212,8 +156,8 @@ var CotModelMC = function(_MC) {
 	}, {
 		key: 'httpPatch',
 		value: function httpPatch() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			this.model = this.cotModel.toJSON();
 			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPatch', this).call(this, resolve, reject);
@@ -223,11 +167,11 @@ var CotModelMC = function(_MC) {
 		value: function httpPost() {
 			var _this4 = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			this.model = this.cotModel.toJSON();
-			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPost', this).call(this, function(data, textStatus, jqXHR) {
+			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPost', this).call(this, function (data, textStatus, jqXHR) {
 				_this4.cotModel.set('id', _this4.model.id);
 				resolve(data, textStatus, jqXHR);
 			}, reject);
@@ -235,8 +179,8 @@ var CotModelMC = function(_MC) {
 	}, {
 		key: 'httpPut',
 		value: function httpPut() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			this.model = this.cotModel.toJSON();
 			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPut', this).call(this, resolve, reject);
@@ -253,19 +197,21 @@ var CotModelMC = function(_MC) {
  */
 
 
-var VC = function() {
+var VC = function () {
 	function VC() {
 		_classCallCheck(this, VC);
 
+		console.log('* VC - CONSTRUCTOR');
 		this.renderedOnce = null;
 	}
 
 	_createClass(VC, [{
 		key: 'remove',
 		value: function remove() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+			console.log('* VC - REMOVE');
 			resolve();
 		}
 	}, {
@@ -273,9 +219,10 @@ var VC = function() {
 		value: function render() {
 			var _this5 = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+			console.log('* VC - RENDER');
 
 			// STEP 2
 			var step2 = function step2() {
@@ -293,17 +240,19 @@ var VC = function() {
 	}, {
 		key: 'render_always',
 		value: function render_always() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+			console.log('* VC - RENDER ALWAYS');
 			resolve();
 		}
 	}, {
 		key: 'render_once',
 		value: function render_once() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+			console.log('* VC - RENDER ONCE');
 			resolve();
 		}
 	}]);
@@ -311,7 +260,7 @@ var VC = function() {
 	return VC;
 }();
 
-var NavVC = function(_VC) {
+var NavVC = function (_VC) {
 	_inherits(NavVC, _VC);
 
 	function NavVC() {
@@ -330,8 +279,8 @@ var NavVC = function(_VC) {
 		value: function closeVC(vc) {
 			var _this7 = this;
 
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function() {};
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
 			console.log('* NAV VC - CLOSE VC');
 
@@ -344,7 +293,7 @@ var NavVC = function(_VC) {
 					vc.$view.hide();
 				}
 			}
-			this.render(function() {
+			this.render(function () {
 				var idx = _this7.vcs.indexOf(vc);
 				if (idx != -1) {
 					_this7.vcs.splice(idx, 1);
@@ -355,8 +304,8 @@ var NavVC = function(_VC) {
 	}, {
 		key: 'openVC',
 		value: function openVC(vc) {
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function() {};
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
 			console.log('* NAV VC - OPEN VC');
 
@@ -373,8 +322,8 @@ var NavVC = function(_VC) {
 	}, {
 		key: 'render_always',
 		value: function render_always() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			console.log('* NAV VC - RENDER ALWAYS');
 
@@ -385,8 +334,8 @@ var NavVC = function(_VC) {
 		value: function render_always_vc() {
 			var _this8 = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			console.log('* NAV VC - RENDER ALWAYS VC');
 
@@ -394,7 +343,7 @@ var NavVC = function(_VC) {
 			var step2 = function step2() {
 				var topVC = _this8.vcs[_this8.vcs.length - 1];
 				topVC.navVC = _this8;
-				topVC.render(function() {
+				topVC.render(function () {
 					topVC.$view.fadeIn(resolve);
 				}, reject);
 			};
@@ -426,7 +375,7 @@ var NavVC = function(_VC) {
  */
 
 
-var NavbarVC = function(_NavVC) {
+var NavbarVC = function (_NavVC) {
 	_inherits(NavbarVC, _NavVC);
 
 	function NavbarVC() {
@@ -448,8 +397,8 @@ var NavbarVC = function(_NavVC) {
 	_createClass(NavbarVC, [{
 		key: 'closeVC',
 		value: function closeVC(vc) {
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function() {};
+			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
 			console.log('* NAVBAR VC - CLOSE VC');
 
@@ -492,14 +441,14 @@ var NavbarVC = function(_NavVC) {
 		value: function render_always() {
 			var _this10 = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			console.log('* NAVBAR VC - RENDER ALWAYS');
 
 			this.$view.filter('.requireLogin').hide();
-			this.render_always_login(function() {
-				_this10.render_always_vc(function(renderMenu) {
+			this.render_always_login(function () {
+				_this10.render_always_vc(function (renderMenu) {
 					if (renderMenu != false) {
 						_this10.render_always_menu(resolve, reject);
 					}
@@ -511,8 +460,8 @@ var NavbarVC = function(_NavVC) {
 		value: function render_always_login() {
 			var _this11 = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			console.log('* NAVBAR VC - RENDER ALWAYS LOGIN');
 
@@ -521,12 +470,12 @@ var NavbarVC = function(_NavVC) {
 				// No UI
 			} else {
 				if (this.cotLogin.isLoggedIn()) {
-					$login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<p class="form-control-static">' + this.cotLogin.username + '</p>\n\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t').find('.btn-logout').on('click', function(e) {
+					$login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<p class="form-control-static">' + this.cotLogin.username + '</p>\n\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t').find('.btn-logout').on('click', function (e) {
 						e.preventDefault();
 						_this11.cotLogin.logout();
 					});
 				} else {
-					$login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t').find('.btn-login').on('click', function(e) {
+					$login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t\t').find('.btn-login').on('click', function (e) {
 						e.preventDefault();
 						_this11.cotLogin.showLogin();
 					});
@@ -539,8 +488,8 @@ var NavbarVC = function(_NavVC) {
 		value: function render_always_menu() {
 			var _this12 = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			console.log('* NAVBAR VC - RENDER ALWAYS MENU');
 
@@ -560,7 +509,7 @@ var NavbarVC = function(_NavVC) {
 
 						var $menuItem = $('<li><a href="#">' + menu.title + '</a></li>');
 						$dropDownMenu.append($menuItem);
-						$menuItem.find('a').on('click', function(e) {
+						$menuItem.find('a').on('click', function (e) {
 							e.preventDefault();
 							console.log('MENU CLICK');
 							console.log('MENU VC', menu.vc);
@@ -591,7 +540,7 @@ var NavbarVC = function(_NavVC) {
 				}
 			}
 
-			var vcs = this.vcs.filter(function(vc) {
+			var vcs = this.vcs.filter(function (vc) {
 				return vc.title != null;
 			});
 
@@ -610,7 +559,7 @@ var NavbarVC = function(_NavVC) {
 
 						var $menuItem = $('<li><a href="#">' + (vc.title || 'Untitled') + '</a></li>');
 						$dropDownMenu.append($menuItem);
-						$menuItem.find('a').on('click', function(e) {
+						$menuItem.find('a').on('click', function (e) {
 							e.preventDefault();
 							_this12.openVC(vc);
 						});
@@ -640,8 +589,8 @@ var NavbarVC = function(_NavVC) {
 	}, {
 		key: 'render_always_vc',
 		value: function render_always_vc() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			console.log('* NAVBAR VC - RENDER ALWAYS VC');
 			if (this.vcs == null || this.vcs.length == 0) {
@@ -650,7 +599,7 @@ var NavbarVC = function(_NavVC) {
 					this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
 					this.defaultVC.vc.options = this.defaultVC.vcOptions;
 				}
-				this.openVC(this.defaultVC.vc, function() {
+				this.openVC(this.defaultVC.vc, function () {
 					resolve(false);
 				}, reject);
 			} else {
@@ -663,13 +612,13 @@ var NavbarVC = function(_NavVC) {
 		value: function render_once() {
 			var _this13 = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function() {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function() {};
+			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
 			console.log('* NAVBAR VC - RENDER ONCE');
 
 			if (this.cotLogin != null) {
-				this.cotLogin.options.onLogin = function() {
+				this.cotLogin.options.onLogin = function () {
 					_this13.render();
 				};
 			}

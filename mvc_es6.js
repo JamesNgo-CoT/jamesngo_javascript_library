@@ -111,12 +111,15 @@ class CotModelMC extends MC {
  */
 class VC {
 	constructor() {
+		console.log('* VC - CONSTRUCTOR');
 		this.renderedOnce = null;
 	}
 	remove(resolve = () => {}, reject = () => {}) {
+		console.log('* VC - REMOVE');
 		resolve();
 	}
 	render(resolve = () => {}, reject = () => {}) {
+		console.log('* VC - RENDER');
 
 		// STEP 2
 		const step2 = () => {
@@ -132,9 +135,11 @@ class VC {
 		}
 	}
 	render_always(resolve = () => {}, reject = () => {}) {
+		console.log('* VC - RENDER ALWAYS');
 		resolve();
 	}
 	render_once(resolve = () => {}, reject = () => {}) {
+		console.log('* VC - RENDER ONCE');
 		resolve();
 	}
 }
