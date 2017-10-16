@@ -141,10 +141,13 @@ class VC {
 
 class NavVC extends VC {
 	constructor() {
+		console.log('* NAV VC - CONSTRUCTOR');
 		super();
 		this.vcs = null;
 	}
 	closeVC(vc, resolve = () => {}, reject = () => {}) {
+		console.log('* NAV VC - CLOSE VC');
+
 		if (this.vcs != null && this.vcs.length > 0 && this.vcs[this.vcs.length - 1] == vc) {
 			this.vcs.pop();
 			if (this.vcs.length > 0) {
@@ -163,6 +166,8 @@ class NavVC extends VC {
 		}, reject);
 	}
 	openVC(vc, resolve = () => {}, reject = () => {}) {
+		console.log('* NAV VC - OPEN VC');
+
 		if (this.vcs == null) {
 			this.vcs = [];
 		}
@@ -174,9 +179,12 @@ class NavVC extends VC {
 		this.render(resolve, reject);
 	}
 	render_always(resolve = () => {}, reject = () => {}) {
+		console.log('* NAV VC - RENDER ALWAYS');
+
 		this.render_always_vc(resolve, reject);
 	}
 	render_always_vc(resolve = () => {}, reject = () => {}) {
+		console.log('* NAV VC - RENDER ALWAYS VC');
 
 		// STEP 2
 		const step2 = () => {
@@ -211,6 +219,8 @@ class NavVC extends VC {
  */
 class NavbarVC extends NavVC {
 	constructor() {
+		console.log('* NAVBAR VC - CONSTRUCTOR');
+
 		super();
 		this.$view = null;
 		this.cotApp = null;
@@ -220,7 +230,8 @@ class NavbarVC extends NavVC {
 		this.vcClasses = null;
 	}
 	closeVC(vc, resolve = () => {}, reject = () => {}) {
-		console.log('CLOSE VC');
+		console.log('* NAVBAR VC - CLOSE VC');
+
 		for (const menu of this.menu) {
 			console.log('CHECK MENU VC', menu.vc, vc)
 			if (menu.vc === vc) {
@@ -234,6 +245,8 @@ class NavbarVC extends NavVC {
 		super.closeVC(vc, resolve, reject);
 	}
 	render_always(resolve = () => {}, reject = () => {}) {
+		console.log('* NAVBAR VC - RENDER ALWAYS');
+
 		this.$view.filter('.requireLogin').hide();
 		this.render_always_login(() => {
 			this.render_always_vc(() => {
@@ -242,6 +255,8 @@ class NavbarVC extends NavVC {
 		}, reject);
 	}
 	render_always_login(resolve = () => {}, reject = () => {}) {
+		console.log('* NAVBAR VC - RENDER ALWAYS LOGIN');
+
 		const $login = this.$view.find('.navbar-login').empty();
 		if (this.cotLogin == null) {
 			// No UI
@@ -270,7 +285,7 @@ class NavbarVC extends NavVC {
 		resolve();
 	}
 	render_always_menu(resolve = () => {}, reject = () => {}) {
-		console.log('RENDER_ALWAYS_MENU');
+		console.log('* NAVBAR VC - RENDER ALWAYS MENU');
 
 		const $menu = this.$view.find('.navbar-menu');
 		$menu.html(`
@@ -283,7 +298,7 @@ class NavbarVC extends NavVC {
 			</ul>
 		`);
 
-		const $dropDownMenu = $menu.find('ul.dropdown-menu').empty();
+		const $dropDownMenu = $menu.find('ul.dropdown-menu');
 
 		if (this.menu != null) {
 			for (const menu of this.menu) {
@@ -322,7 +337,7 @@ class NavbarVC extends NavVC {
 		resolve();
 	}
 	render_always_vc(resolve = () => {}, reject = () => {}) {
-		console.log('RENDER ALWAYS VC');
+		console.log('* NAVBAR VC - RENDER ALWAYS VC');
 		if (this.vcs == null || this.vcs.length == 0) {
 			console.log('RENDER ALWAYS VC NULL');
 			if (this.defaultVC.vc == null) {
@@ -331,11 +346,13 @@ class NavbarVC extends NavVC {
 			}
 			this.openVC(this.defaultVC.vc, resolve, reject);
 		} else {
-			console.log('RENDER ALWAYS VC NOT NULL')
+			console.log('RENDER ALWAYS VC NOT NULL');
 			super.render_always_vc(resolve, reject);
 		}
 	}
 	render_once(resolve = () => {}, reject = () => {}) {
+		console.log('* NAVBAR VC - RENDER ONCE');
+
 		if (this.cotLogin != null) {
 			this.cotLogin.options.onLogin = () => {
 				this.render();
