@@ -281,7 +281,7 @@ var NavVC = function (_VC) {
 					var topVC = this.vcs.pop();
 					this.vcs.push(vc, topVC);
 				} else {
-					this.vcs.$view.hide();
+					vc.$view.hide();
 				}
 			}
 			this.render(function () {
