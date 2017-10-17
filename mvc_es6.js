@@ -392,6 +392,7 @@ class NavbarVC extends NavVC {
   			</nav>
   		`);
 
+      this.$view_navbar_brand = $('.navbar-brand', $view);
       this.$view_navbar_vc_ui = $('.navbar-vc-ui', $view);
       this.$view_navbar_menu = $('.navbar-menu', $view);
       this.$view_navbar_login = $('.navbar-login', $view);

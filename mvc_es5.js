@@ -630,6 +630,7 @@ var NavbarVC = function (_NavVC) {
         // VIEW
         var $view = _this14.$view = $('\n  \t\t\t<nav class="navbar navbar-default navvc">\n  \t\t\t\t<div class="container-fluid">\n  \t\t\t\t\t<div class="navbar-header">\n  \t\t\t\t\t\t<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">\n  \t\t\t\t\t\t\t<span class="sr-only">Toggle navigation</span>\n  \t\t\t\t\t\t\t<span class="icon-bar"></span>\n  \t\t\t\t\t\t\t<span class="icon-bar"></span>\n  \t\t\t\t\t\t\t<span class="icon-bar"></span>\n  \t\t\t\t\t\t</button>\n  \t\t\t\t\t\t<span class="navbar-brand"></span>\n  \t\t\t\t\t</div>\n  \t\t\t\t\t<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">\n  \t\t\t\t\t\t<div class="navbar-left">\n  \t\t\t\t\t\t\t<div class="nav navbar-nav navbar-vc-ui"></div>\n  \t\t\t\t\t\t</div>\n  \t\t\t\t\t\t<div class="navbar-right">\n  \t\t\t\t\t\t\t<div class="nav navbar-nav navbar-menu"></div>\n  \t\t\t\t\t\t\t<div class="nav navbar-nav navbar-login"></div>\n  \t\t\t\t\t\t\t<div class="nav navbar-nav navbar-lock"></div>\n  \t\t\t\t\t\t</div>\n  \t\t\t\t\t</div>\n  \t\t\t\t</div>\n  \t\t\t</nav>\n  \t\t');
 
+        _this14.$view_navbar_brand = $('.navbar-brand', $view);
         _this14.$view_navbar_vc_ui = $('.navbar-vc-ui', $view);
         _this14.$view_navbar_menu = $('.navbar-menu', $view);
         _this14.$view_navbar_login = $('.navbar-login', $view);
