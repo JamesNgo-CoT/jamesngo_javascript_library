@@ -104,7 +104,7 @@ class CotModelMC extends MC {
 class VC {
   hide(resolve = () => {}, reject = () => {}) {
     if (this.$view != null) {
-      this.$view.findOut(400, resolve);
+      this.$view.fadeOut(400, resolve);
     } else {
       resolve();
     }
@@ -199,14 +199,18 @@ class NavVC extends VC {
     if (this.vcs == null || this.vcs.length == 0) {
       if (this.defaultVC.vc == null) {
         this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
-        this.defaultVC.vc.options = this.defaultVC.options;
+        this.defaultVC.vc.options = this.defaultVC.vcOptions;
       }
       this.openVC(this.defaultVC.vc, resolve, reject);
     } else {
 
       // STEP 2
       const step2 = () => {
-        this.vcs[this.vcs.length - 1].show(resolve, reject);
+        const topVC = this.vcs[this.vcs.length - 1];
+        topVC.navVC = this;
+        topVC.render(() => {
+          topVC.show(resolve, reject);
+        }, reject);
       };
 
       // STEP 1
@@ -224,41 +228,78 @@ class NavVC extends VC {
   }
 }
 
+/**
+ Navigation Bar View Controller
+ Property:
+ - $view_navbar_login
+ -
+ -
+ - defaultVC
+ - menu
+ - options
+ - requireLoginVC
+ */
 class NavbarVC extends NavVC {
-  render_always(resolve = () => {}, reject = () => {}) {
-    this.$view.filter('.requireLogin').hide();
-    this.render_always_login(() => {
-      const renderMenu = (this.vcs != null && this.vcs.length > 0);
-      super.render_always(() => {
-        if (renderMenu) {
-          this.render_always_menu(resolve, reject);
-        } else {
-          resolve();
+  closeVC(vc, resolve = () => {}, reject = () => {}) {
+    super.closeVC(vc, () => {
+      if (this.defaultVC.vc === vc) {
+        this.defaultVC.vc = null;
+      }
+      if (this.menu != null) {
+        for (const menu of this.menu) {
+          if (menu.vc === vc) {
+            menu.vc = null;
+          }
         }
-      }, reject);
+      }
     }, reject);
   }
+  render_always(resolve = () => {}, reject = () => {}) {
+
+    // Step 2
+    const step2 = () => {
+      this.render_always_login(() => {
+        super.render_always(() => {
+          this.render_always_menu(resolve, reject);
+        }, reject);
+      }, reject);
+    }
+
+    // Step 1
+    const step1 = () => {
+      if (this.requireLoginVC != null) {
+        this.requireLoginVC.hide(step2, reject);
+      } else {
+        step2()
+      }
+    }
+
+    // Start
+    step1();
+  }
   render_always_login(resolve = () => {}, reject = () => {}) {
-    const $login = this.$view.find('.navbar-login').empty();
+    const $view_navbar_login = this.$view_navbar_login;
+    $view_navbar_login.empty();
+
     if (this.cotLogin == null) {
       // No UI
     } else {
       if (this.cotLogin.isLoggedIn()) {
-        $login.append(`
+        $view_navbar_login.append(`
 						<form class="navbar-form navbar-left">
 							<p class="form-control-static">${this.cotLogin.username}</p>
 							<button class="btn btn-default btn-logout" type="button">Logout</button>
 						</form>
-					`).find('.btn-logout').on('click', (e) => {
+				`).find('.btn-logout').on('click', (e) => {
           e.preventDefault();
           this.cotLogin.logout();
         });
       } else {
-        $login.append(`
-						<form class="navbar-form navbar-left">
-							<button class="btn btn-default btn-login" type="button">Login</button>
-						</form>
-					`).find('.btn-login').on('click', (e) => {
+        $view_navbar_login.append(`
+					<form class="navbar-form navbar-left">
+						<button class="btn btn-default btn-login" type="button">Login</button>
+					</form>
+				`).find('.btn-login').on('click', (e) => {
           e.preventDefault();
           this.cotLogin.showLogin();
         });
@@ -267,8 +308,8 @@ class NavbarVC extends NavVC {
     resolve();
   }
   render_always_menu(resolve = () => {}, reject = () => {}) {
-    const $menu = this.$view.find('.navbar-menu');
-    $menu.html(`
+    const $view_navbar_menu = this.$view_navbar_menu;
+    $view_navbar_menu.empty().append(`
 			<ul class="nav navbar-nav">
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>
@@ -278,7 +319,7 @@ class NavbarVC extends NavVC {
 			</ul>
 		`);
 
-    const $dropDownMenu = $menu.find('ul.dropdown-menu');
+    const $dropDownMenu = $view_navbar_menu.find('ul.dropdown-menu');
 
     if (this.menu != null) {
       for (const menu of this.menu) {
@@ -286,8 +327,6 @@ class NavbarVC extends NavVC {
         $dropDownMenu.append($menuItem);
         $menuItem.find('a').on('click', (e) => {
           e.preventDefault();
-          console.log('MENU CLICK');
-          console.log('MENU VC', menu.vc);
           if (menu.vc == null) {
             menu.vc = new this.vcClasses[menu.vcClass]();
             menu.vc.options = menu.vcOptions;
@@ -318,13 +357,16 @@ class NavbarVC extends NavVC {
   }
   render_once(resolve = () => {}, reject = () => {}) {
     super.render_once(() => {
+
+      // SET UP COTLOGIN
       if (this.cotLogin != null) {
         this.cotLogin.options.onLogin = () => {
           this.render();
         }
       }
 
-      this.$view = $(`
+      // VIEW
+      const $view = this.$view = $(`
   			<nav class="navbar navbar-default navvc">
   				<div class="container-fluid">
   					<div class="navbar-header">
@@ -338,7 +380,7 @@ class NavbarVC extends NavVC {
   					</div>
   					<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
   						<div class="navbar-left">
-  							<div class="navbar-vc-ui"></div>
+  							<div class="nav navbar-nav navbar-vc-ui"></div>
   						</div>
   						<div class="navbar-right">
   							<div class="nav navbar-nav navbar-menu"></div>
@@ -348,14 +390,42 @@ class NavbarVC extends NavVC {
   					</div>
   				</div>
   			</nav>
-  			<div class="requireLogin">
-  				<p>Please login.</p>
-  			</div>
   		`);
-      $('.navbar-lock', this.$view.filter('.navbar')).append($('.securesite > img'));
-      $('#app-content-top').append(this.$view);
 
+      this.$view_navbar_vc_ui = $('.navbar-vc-ui', $view);
+      this.$view_navbar_menu = $('.navbar-menu', $view);
+      this.$view_navbar_login = $('.navbar-login', $view);
+
+      // LOCK ICON
+      $('.navbar-lock', $view).append($('.securesite > img'));
+
+      // APPEND TO HTML
+      this.options.$placeholder.append(this.$view);
+
+      // END
       resolve();
     }, reject);
+  }
+}
+
+/**
+ Require Login View Controller
+ Property:
+ - options
+ */
+class RequireLoginVC extends VC {
+  hide(resolve = () => {}, reject = () => {}) {
+    console.log('HIDE');
+    super.hide(resolve, reject);
+  }
+  render_once(resolve = () => {}, reject = () => {}) {
+    const $view = this.$view = $(`
+      <div>
+        <p>Please login</p>
+      </div>
+    `);
+    this.options.$placeholder.append($view);
+    this.$view.hide();
+    resolve();
   }
 }
