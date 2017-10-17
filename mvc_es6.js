@@ -268,7 +268,7 @@ class NavbarVC extends NavVC {
     // Step 1
     const step1 = () => {
       if (this.requireLoginVC != null) {
-        this.requireLoginVC.hide(step2, reject);
+        this.requireLoginVC.vc.hide(step2, reject);
       } else {
         step2()
       }
@@ -404,7 +404,7 @@ class NavbarVC extends NavVC {
       this.options.$placeholder.append(this.$view);
 
       if (this.requireLoginVC != null) {
-        this.requireLoginVC.vc = this.vcClasses[this.requireLoginVC.vcClass]();
+        this.requireLoginVC.vc = new this.vcClasses[this.requireLoginVC.vcClass]();
         this.requireLoginVC.navVC = this;
         this.requireLoginVC.vc.options = this.requireLoginVC.vcOptions;
         this.requireLoginVC.vc.render(resolve, reject);
@@ -422,7 +422,6 @@ class NavbarVC extends NavVC {
  */
 class RequireLoginVC extends VC {
   hide(resolve = () => {}, reject = () => {}) {
-    console.log('HIDE');
     super.hide(resolve, reject);
   }
   render_once(resolve = () => {}, reject = () => {}) {

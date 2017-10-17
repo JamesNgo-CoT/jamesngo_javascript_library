@@ -474,7 +474,7 @@ var NavbarVC = function (_NavVC) {
       // Step 1
       var step1 = function step1() {
         if (_this11.requireLoginVC != null) {
-          _this11.requireLoginVC.hide(step2, reject);
+          _this11.requireLoginVC.vc.hide(step2, reject);
         } else {
           step2();
         }
@@ -678,7 +678,6 @@ var RequireLoginVC = function (_VC2) {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-      console.log('HIDE');
       _get(RequireLoginVC.prototype.__proto__ || Object.getPrototypeOf(RequireLoginVC.prototype), 'hide', this).call(this, resolve, reject);
     }
   }, {
