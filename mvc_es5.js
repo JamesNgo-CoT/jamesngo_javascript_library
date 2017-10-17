@@ -633,7 +633,8 @@ var NavbarVC = function (_NavVC) {
         if (_this14.cotLogin != null) {
           var setLog = function setLog() {
             if (_this14.cotLogin.isLoggedIn()) {
-              _this14.ajaxSettings.headers.Authorization = 'AuthSession ' + _this14.cotLogin.sid;
+              // this.ajaxSettings.headers.Authorization = `AuthSession ${this.cotLogin.sid}`;
+              _this14.ajaxSettings.headers.Authorization = _this14.cotLogin.sid;
             }
           };
 

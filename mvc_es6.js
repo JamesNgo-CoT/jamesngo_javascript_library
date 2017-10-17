@@ -371,7 +371,8 @@ class NavbarVC extends NavVC {
       if (this.cotLogin != null) {
         const setLog = () => {
           if (this.cotLogin.isLoggedIn()) {
-            this.ajaxSettings.headers.Authorization = `AuthSession ${this.cotLogin.sid}`;
+            // this.ajaxSettings.headers.Authorization = `AuthSession ${this.cotLogin.sid}`;
+            this.ajaxSettings.headers.Authorization = this.cotLogin.sid;
           }
         };
 
