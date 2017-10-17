@@ -21,6 +21,7 @@ class MC {
       },
       method: 'GET',
       success: (data, textStatus, jqXHR) => {
+        this.model = data;
         resolve(data, textStatus, jqXHR);
       }
     }, this.ajaxSettings));
@@ -80,7 +81,7 @@ class CotModelMC extends MC {
   }
   httpGet(id, resolve = () => {}, reject = () => {}) {
     super.httpGet(id, (data, textStatus, jqXHR) => {
-      this._cotModel.set(this.model);
+      this.cotModel.set(this.model);
       resolve(data, textStatus, jqXHR);
     }, reject);
   }
