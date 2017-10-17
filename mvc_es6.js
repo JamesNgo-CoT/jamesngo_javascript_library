@@ -403,8 +403,14 @@ class NavbarVC extends NavVC {
       // APPEND TO HTML
       this.options.$placeholder.append(this.$view);
 
-      // END
-      resolve();
+      if (this.requireLoginVC != null) {
+        this.requireLoginVC.vc = this.vcClasses[this.requireLoginVC.vcClass]();
+        this.requireLoginVC.navVC = this;
+        this.requireLoginVC.vc.options = this.requireLoginVC.vcOptions;
+        this.requireLoginVC.vc.render(resolve, reject);
+      } else {
+        resolve();
+      }
     }, reject);
   }
 }

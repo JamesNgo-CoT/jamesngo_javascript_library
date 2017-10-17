@@ -641,8 +641,14 @@ var NavbarVC = function (_NavVC) {
         // APPEND TO HTML
         _this14.options.$placeholder.append(_this14.$view);
 
-        // END
-        resolve();
+        if (_this14.requireLoginVC != null) {
+          _this14.requireLoginVC.vc = _this14.vcClasses[_this14.requireLoginVC.vcClass]();
+          _this14.requireLoginVC.navVC = _this14;
+          _this14.requireLoginVC.vc.options = _this14.requireLoginVC.vcOptions;
+          _this14.requireLoginVC.vc.render(resolve, reject);
+        } else {
+          resolve();
+        }
       }, reject);
     }
   }]);
