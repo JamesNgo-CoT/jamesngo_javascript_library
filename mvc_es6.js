@@ -108,7 +108,7 @@ class CotModelMC extends MC {
  */
 class VC {
   hide(resolve = () => {}, reject = () => {}) {
-    if (this.$view != null) {
+    if (this.$view != null && this.$view.is(':visible')) {
       this.$view.fadeOut(400, resolve);
     } else {
       resolve();
@@ -144,7 +144,7 @@ class VC {
     resolve();
   }
   show(resolve = () => {}, reject = () => {}) {
-    if (this.$view != null) {
+    if (this.$view != null && !this.$view.is(':visible')) {
       this.$view.fadeIn(400, resolve);
     } else {
       resolve();
