@@ -353,7 +353,7 @@ class NavbarVC extends NavVC {
   			</div>
   		`);
       $('.navbar-lock', this.$view.filter('.navbar')).append($('.securesite > img'));
-      $('.mvc_container').append(this.$view);
+      $('#app-content-top').append(this.$view);
 
       resolve();
     }, reject);
