@@ -356,11 +356,21 @@ class NavbarVC extends NavVC {
     resolve();
   }
   render_once(resolve = () => {}, reject = () => {}) {
+    this.ajaxSettings = {
+      contentType: 'application/json; charset=UTF-8',
+      headers: {}
+    }
+    $.ajaxSetup(this.ajaxSettings);
     super.render_once(() => {
 
       // SET UP COTLOGIN
       if (this.cotLogin != null) {
         this.cotLogin.options.onLogin = () => {
+          if (this.ajaxSettings.headers == null) {
+            this.ajaxSettings.headers = {};
+          }
+          this.ajaxSettings.headers.Authorization = `AuthSession ${this.cotLogin.sid}`;
+
           this.render();
         }
       }

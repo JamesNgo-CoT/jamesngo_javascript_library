@@ -618,11 +618,21 @@ var NavbarVC = function (_NavVC) {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+      this.ajaxSettings = {
+        contentType: 'application/json; charset=UTF-8',
+        headers: {}
+      };
+      $.ajaxSetup(this.ajaxSettings);
       _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_once', this).call(this, function () {
 
         // SET UP COTLOGIN
         if (_this14.cotLogin != null) {
           _this14.cotLogin.options.onLogin = function () {
+            if (_this14.ajaxSettings.headers == null) {
+              _this14.ajaxSettings.headers = {};
+            }
+            _this14.ajaxSettings.headers.Authorization = 'AuthSession ' + _this14.cotLogin.sid;
+
             _this14.render();
           };
         }
