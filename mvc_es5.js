@@ -13,6 +13,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  Model Controller
  Properties:
+ - ajaxSettings
  - model
  - url
  */
@@ -39,7 +40,8 @@ var MC = function () {
       var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
       var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-      $.ajax(this.url + '(\'' + id + '\')', {
+      $.ajax(this.url + '(\'' + id + '\')', $.extend({
+        contentType: 'application/json; charset=UTF-8',
         error: function error(jqXHR, textStatus, errorThrown) {
           reject(jqXHR, textStatus, errorThrown);
         },
@@ -47,7 +49,7 @@ var MC = function () {
         success: function success(data, textStatus, jqXHR) {
           resolve(data, textStatus, jqXHR);
         }
-      });
+      }, this.ajaxSettings));
     }
   }, {
     key: 'httpPatch',
@@ -55,7 +57,8 @@ var MC = function () {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-      $.ajax(this.url + '(\'' + this.model.id + '\')', {
+      $.ajax(this.url + '(\'' + this.model.id + '\')', $.extend({
+        contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(this.model),
         error: function error(jqXHR, textStatus, errorThrown) {
           reject(jqXHR, textStatus, errorThrown);
@@ -64,7 +67,7 @@ var MC = function () {
         success: function success(data, textStatus, jqXHR) {
           resolve(data, textStatus, jqXHR);
         }
-      });
+      }, this.ajaxSettings));
     }
   }, {
     key: 'httpPost',
@@ -75,7 +78,8 @@ var MC = function () {
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
       this.model.id = null;
-      $.ajax(this.url, {
+      $.ajax(this.url, $.extend({
+        contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(this.model),
         error: function error(jqXHR, textStatus, errorThrown) {
           reject(jqXHR, textStatus, errorThrown);
@@ -85,7 +89,7 @@ var MC = function () {
           _this.model.id = jqXHR.getResponseHeader('OData-EntityID');
           resolve(data, textStatus, jqXHR);
         }
-      });
+      }, this.ajaxSettings));
     }
   }, {
     key: 'httpPut',
@@ -93,7 +97,8 @@ var MC = function () {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-      $.ajax(this.url + '(\'' + this.model.id + '\')', {
+      $.ajax(this.url + '(\'' + this.model.id + '\')', $.extend({
+        contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(this.model),
         error: function error(jqXHR, textStatus, errorThrown) {
           reject(jqXHR, textStatus, errorThrown);
@@ -102,7 +107,7 @@ var MC = function () {
         success: function success(data, textStatus, jqXHR) {
           resolve(data, textStatus, jqXHR);
         }
-      });
+      }, this.ajaxSettings));
     }
   }]);
 
@@ -619,22 +624,25 @@ var NavbarVC = function (_NavVC) {
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
       this.ajaxSettings = {
-        contentType: 'application/json; charset=UTF-8',
         headers: {}
       };
-      $.ajaxSetup(this.ajaxSettings);
+
       _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_once', this).call(this, function () {
 
         // SET UP COTLOGIN
         if (_this14.cotLogin != null) {
-          _this14.cotLogin.options.onLogin = function () {
-            if (_this14.ajaxSettings.headers == null) {
-              _this14.ajaxSettings.headers = {};
+          var setLog = function setLog() {
+            if (_this14.cotLogin.isLoggedIn()) {
+              _this14.ajaxSettings.headers.Authorization = 'AuthSession ' + _this14.cotLogin.sid;
             }
-            _this14.ajaxSettings.headers.Authorization = 'AuthSession ' + _this14.cotLogin.sid;
+          };
 
+          _this14.cotLogin.options.onLogin = function () {
+            setLog();
             _this14.render();
           };
+
+          setLog();
         }
 
         // VIEW

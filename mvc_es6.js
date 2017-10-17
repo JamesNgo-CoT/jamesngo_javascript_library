@@ -1,6 +1,7 @@
 /**
  Model Controller
  Properties:
+ - ajaxSettings
  - model
  - url
  */
@@ -13,7 +14,8 @@ class MC {
     this.httpPatch(resolve, reject);
   }
   httpGet(id, resolve = () => {}, reject = () => {}) {
-    $.ajax(`${this.url}('${id}')`, {
+    $.ajax(`${this.url}('${id}')`, $.extend({
+      contentType: 'application/json; charset=UTF-8',
       error: (jqXHR, textStatus, errorThrown) => {
         reject(jqXHR, textStatus, errorThrown);
       },
@@ -21,10 +23,11 @@ class MC {
       success: (data, textStatus, jqXHR) => {
         resolve(data, textStatus, jqXHR);
       }
-    });
+    }, this.ajaxSettings));
   }
   httpPatch(resolve = () => {}, reject = () => {}) {
-    $.ajax(`${this.url}('${this.model.id}')`, {
+    $.ajax(`${this.url}('${this.model.id}')`, $.extend({
+      contentType: 'application/json; charset=UTF-8',
       data: JSON.stringify(this.model),
       error: (jqXHR, textStatus, errorThrown) => {
         reject(jqXHR, textStatus, errorThrown);
@@ -33,11 +36,12 @@ class MC {
       success: (data, textStatus, jqXHR) => {
         resolve(data, textStatus, jqXHR);
       }
-    });
+    }, this.ajaxSettings));
   }
   httpPost(resolve = () => {}, reject = () => {}) {
     this.model.id = null;
-    $.ajax(this.url, {
+    $.ajax(this.url, $.extend({
+      contentType: 'application/json; charset=UTF-8',
       data: JSON.stringify(this.model),
       error: (jqXHR, textStatus, errorThrown) => {
         reject(jqXHR, textStatus, errorThrown);
@@ -47,10 +51,11 @@ class MC {
         this.model.id = jqXHR.getResponseHeader('OData-EntityID');
         resolve(data, textStatus, jqXHR);
       }
-    });
+    }, this.ajaxSettings));
   }
   httpPut(resolve = () => {}, reject = () => {}) {
-    $.ajax(`${this.url}('${this.model.id}')`, {
+    $.ajax(`${this.url}('${this.model.id}')`, $.extend({
+      contentType: 'application/json; charset=UTF-8',
       data: JSON.stringify(this.model),
       error: (jqXHR, textStatus, errorThrown) => {
         reject(jqXHR, textStatus, errorThrown);
@@ -59,7 +64,7 @@ class MC {
       success: (data, textStatus, jqXHR) => {
         resolve(data, textStatus, jqXHR);
       }
-    });
+    }, this.ajaxSettings));
   }
 }
 
@@ -357,22 +362,25 @@ class NavbarVC extends NavVC {
   }
   render_once(resolve = () => {}, reject = () => {}) {
     this.ajaxSettings = {
-      contentType: 'application/json; charset=UTF-8',
       headers: {}
     }
-    $.ajaxSetup(this.ajaxSettings);
+
     super.render_once(() => {
 
       // SET UP COTLOGIN
       if (this.cotLogin != null) {
-        this.cotLogin.options.onLogin = () => {
-          if (this.ajaxSettings.headers == null) {
-            this.ajaxSettings.headers = {};
+        const setLog = () => {
+          if (this.cotLogin.isLoggedIn()) {
+            this.ajaxSettings.headers.Authorization = `AuthSession ${this.cotLogin.sid}`;
           }
-          this.ajaxSettings.headers.Authorization = `AuthSession ${this.cotLogin.sid}`;
+        };
 
+        this.cotLogin.options.onLogin = () => {
+          setLog();
           this.render();
         }
+
+        setLog();
       }
 
       // VIEW
