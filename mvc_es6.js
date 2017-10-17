@@ -44,7 +44,7 @@ class MC {
       },
       method: 'POST',
       success: (data, textStatus, jqXHR) => {
-        this._model.id = jqXHR.getResponseHeader('OData-EntityID');
+        this.model.id = jqXHR.getResponseHeader('OData-EntityID');
         resolve(data, textStatus, jqXHR);
       }
     });

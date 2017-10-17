@@ -82,7 +82,7 @@ var MC = function () {
         },
         method: 'POST',
         success: function success(data, textStatus, jqXHR) {
-          _this._model.id = jqXHR.getResponseHeader('OData-EntityID');
+          _this.model.id = jqXHR.getResponseHeader('OData-EntityID');
           resolve(data, textStatus, jqXHR);
         }
       });
