@@ -310,8 +310,8 @@ var NavVC = function (_VC) {
       var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
 
-      // STEP 2
-      var step2 = function step2() {
+      // STEP 3
+      var step3 = function step3() {
         if (_this8.vcs != null && _this8.vcs.length != 0) {
           var i = _this8.vcs.indexOf(vc);
           if (i != -1) {
@@ -319,6 +319,11 @@ var NavVC = function (_VC) {
           }
         }
         vc.remove(resolve, reject);
+      };
+
+      // STEP 2
+      var step2 = function step2() {
+        _this8.render(step3, reject);
       };
 
       // STEP 1
@@ -331,7 +336,7 @@ var NavVC = function (_VC) {
         } else {
           var topVC = _this8.vcs.pop();
           _this8.vcs.push(vc, topVC);
-          _this8.render(step2, reject);
+          step2();
         }
       };
 

@@ -162,8 +162,8 @@ class VC {
 class NavVC extends VC {
   closeVC(vc, resolve = () => {}, reject = () => {}) {
 
-    // STEP 2
-    const step2 = () => {
+    // STEP 3
+    const step3 = () => {
       if (this.vcs != null && this.vcs.length != 0) {
         const i = this.vcs.indexOf(vc);
         if (i != -1) {
@@ -172,6 +172,11 @@ class NavVC extends VC {
       }
       vc.remove(resolve, reject);
     };
+
+    // STEP 2
+    const step2 = () => {
+      this.render(step3, reject);
+    }
 
     // STEP 1
     const step1 = () => {
@@ -183,7 +188,7 @@ class NavVC extends VC {
       } else {
         const topVC = this.vcs.pop();
         this.vcs.push(vc, topVC);
-        this.render(step2, reject);
+        step2();
       }
     };
 
