@@ -247,18 +247,17 @@ class NavVC extends VC {
  */
 class NavbarVC extends NavVC {
   closeVC(vc, resolve = () => {}, reject = () => {}) {
-    super.closeVC(vc, () => {
-      if (this.defaultVC.vc === vc) {
-        this.defaultVC.vc = null;
-      }
-      if (this.menu != null) {
-        for (const menu of this.menu) {
-          if (menu.vc === vc) {
-            menu.vc = null;
-          }
+    if (this.defaultVC.vc === vc) {
+      this.defaultVC.vc = null;
+    }
+    if (this.menu != null) {
+      for (const menu of this.menu) {
+        if (menu.vc === vc) {
+          menu.vc = null;
         }
       }
-    }, reject);
+    }
+    super.closeVC(vc, resolve, reject);
   }
   render_always(resolve = () => {}, reject = () => {}) {
 
