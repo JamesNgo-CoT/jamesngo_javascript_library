@@ -110,7 +110,14 @@ class CotModelMC extends MC {
 class VC {
   hide(resolve = () => {}, reject = () => {}) {
     if (this.$view != null && this.$view.is(':visible')) {
-      this.$view.fadeOut(400, resolve);
+      const viewCount = this.$view.length;
+      let viewCounter = 0;
+      this.$view.fadeOut(400, () => {
+        viewCounter += 1;
+        if (viewCounter == viewCount) {
+          resolve();
+        }
+      });
     } else {
       resolve();
     }
@@ -119,10 +126,15 @@ class VC {
     resolve();
   }
   render(resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('VC - RENDER', myCounter);
 
     // STEP 2
     const step2 = () => {
-      this.render_always(resolve, reject);
+      this.render_always(() => {
+        console.log('VC - RENDER - RESOLVE', myCounter);
+        resolve();
+      }, reject);
     };
 
     // STEP 1
@@ -145,9 +157,21 @@ class VC {
     resolve();
   }
   show(resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('VC - SHOW', myCounter);
+
     if (this.$view != null && !this.$view.is(':visible')) {
-      this.$view.fadeIn(400, resolve);
+      const viewCount = this.$view.length;
+      let viewCounter = 0;
+      this.$view.fadeIn(400, () => {
+        viewCounter += 1;
+        if (viewCounter == viewCount) {
+          console.log('VC - SHOW - RESOLVE (A)', myCounter);
+          resolve();
+        }
+      });
     } else {
+      console.log('VC - SHOW - RESOLVE (B)', myCounter);
       resolve();
     }
   }
@@ -196,6 +220,9 @@ class NavVC extends VC {
     step1();
   }
   openVC(vc, resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAV VC - OPENVC', myCounter);
+
     if (this.vcs == null) {
       this.vcs = [];
     }
@@ -204,15 +231,24 @@ class NavVC extends VC {
       this.vcs.splice(i, 1);
     }
     this.vcs.push(vc);
-    this.render(resolve, reject);
+    this.render(() => {
+      console.log('NAV VC - OPENVC - RESOLVE', myCounter);
+      resolve();
+    }, reject);
   }
   render_always(resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAV VC - RENDER ALWAYS', myCounter);
+
     if (this.vcs == null || this.vcs.length == 0) {
       if (this.defaultVC.vc == null) {
         this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
         this.defaultVC.vc.options = this.defaultVC.vcOptions;
       }
-      this.openVC(this.defaultVC.vc, resolve, reject);
+      this.openVC(this.defaultVC.vc, () => {
+        console.log('NAV VC - RENDER ALWAYS - RESOLVE (A)', myCounter);
+        resolve();
+      }, reject);
     } else {
 
       // STEP 2
@@ -220,7 +256,10 @@ class NavVC extends VC {
         const topVC = this.vcs[this.vcs.length - 1];
         topVC.navVC = this;
         topVC.render(() => {
-          topVC.show(resolve, reject);
+          topVC.show(() => {
+            console.log('NAV VC - RENDER ALWAYS - RESOLVE (B)', myCounter);
+            resolve();
+          }, reject);
         }, reject);
       };
 
@@ -239,6 +278,8 @@ class NavVC extends VC {
   }
 }
 
+let counter = 0;
+
 /**
  Navigation Bar View Controller
  Property:
@@ -252,6 +293,9 @@ class NavVC extends VC {
  */
 class NavbarVC extends NavVC {
   closeVC(vc, resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAVBAR VC - CLOSE VC', myCounter);
+
     if (this.defaultVC.vc === vc) {
       this.defaultVC.vc = null;
     }
@@ -262,25 +306,80 @@ class NavbarVC extends NavVC {
         }
       }
     }
-    super.closeVC(vc, resolve, reject);
+    // super.closeVC(vc, resolve, reject);
+    super.closeVC(vc, () => {
+      console.log('NAVBAR VC - CLOSE VC - RESOLVE', myCounter);
+      resolve();
+    }, () => {
+      console.log('NAVBAR VC - CLOSE VC - REJECT', myCounter);
+      reject();
+    });
+  }
+  openVC(vc, resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAVBAR VC - OPEN VC', myCounter);
+
+    // super.openVC(vc, resolve, reject);
+    super.openVC(vc, () => {
+      console.log('NAVBAR VC - OPEN VC - RESOLVE', myCounter);
+      resolve();
+    }, () => {
+      console.log('NAVBAR VC - OPEN VC - REJECT', myCounter);
+      reject();
+    });
+  }
+  render(resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAVBAR VC - RENDER', myCounter);
+
+    // super.render(resolve, reject);
+    super.render(() => {
+      console.log('NAVBAR VC - RENDER - RESOLVE', myCounter);
+      resolve();
+    }, () => {
+      console.log('NAVBAR VC - RENDER - REJECT', myCounter);
+      reject();
+    });
   }
   render_always(resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAVBAR VC - RENDER ALWAYS', myCounter);
 
     // Step 2
     const step2 = () => {
       this.render_always_login(() => {
         super.render_always(() => {
-          this.render_always_menu(resolve, reject);
-        }, reject);
-      }, reject);
+          // this.render_always_menu(resolve, reject);
+          this.render_always_menu(() => {
+            console.log('NAVBAR VC - RENDER ALWAYS - RESOLVE', myCounter);
+            resolve();
+          }, () => {
+            console.log('NAVBAR VC - RENDER ALWAYS - REJECT (A)', myCounter);
+            reject();
+          });
+        }, () => {
+          console.log('NAVBAR VC - RENDER ALWAYS - REJECT (B)', myCounter);
+          reject();
+        });
+      }, () => {
+        console.log('NAVBAR VC - RENDER ALWAYS - REJECT (C)', myCounter);
+        reject()
+      });
     }
 
     // Step 1
     const step1 = () => {
       if (this.requireLoginVC != null) {
-        this.requireLoginVC.vc.hide(step2, reject);
+        this.requireLoginVC.vc.hide(() => {
+          console.log('NAVBAR VC - RENDER ALWAYS - STEP 2 (A)', myCounter);
+          step2();
+        }, () => {
+          console.log('NAVBAR VC - RENDER ALWAYS - REJECT (D)', myCounter);
+          reject();
+        });
       } else {
-        step2()
+        console.log('NAVBAR VC - RENDER ALWAYS - STEP 2 (B)', myCounter);
+        step2();
       }
     }
 
@@ -288,6 +387,9 @@ class NavbarVC extends NavVC {
     step1();
   }
   render_always_login(resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAVBAR VC - RENDER ALWAYS LOGIN', myCounter);
+
     const $view_navbar_login = this.$view_navbar_login;
     $view_navbar_login.empty();
 
@@ -315,9 +417,14 @@ class NavbarVC extends NavVC {
         });
       }
     }
+
+    console.log('NAVBAR VC - RENDER ALWAYS LOGIN - RESOLVE', myCounter);
     resolve();
   }
   render_always_menu(resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAVBAR VC - RENDER ALWAYS MENU', myCounter);
+
     const $view_navbar_menu = this.$view_navbar_menu;
     $view_navbar_menu.empty().append(`
 			<ul class="nav navbar-nav">
@@ -362,10 +469,13 @@ class NavbarVC extends NavVC {
         });
       }
     }
-
+    console.log('NAVBAR VC - RENDER ALWAYS MENU - RESOLVE', myCounter);
     resolve();
   }
   render_once(resolve = () => {}, reject = () => {}) {
+    const myCounter = counter++;
+    console.log('NAVBAR VC - RENDER ONCE', myCounter);
+
     this.ajaxSettings = {
       headers: {}
     }
@@ -431,11 +541,23 @@ class NavbarVC extends NavVC {
         this.requireLoginVC.vc = new this.vcClasses[this.requireLoginVC.vcClass]();
         this.requireLoginVC.navVC = this;
         this.requireLoginVC.vc.options = this.requireLoginVC.vcOptions;
-        this.requireLoginVC.vc.render(resolve, reject);
+        //this.requireLoginVC.vc.render(resolve, reject);
+        this.requireLoginVC.vc.render(() => {
+          console.log('NAVBAR VC - RENDER ONCE - RESOLVE (A)', myCounter);
+          resolve();
+        }, () => {
+          console.log('NAVBAR VC - RENDER ONCE - REJECT (A)', myCounter);
+          reject();
+        });
       } else {
+        console.log('NAVBAR VC - RENDER ONCE - RESOLVE (B)', myCounter);
         resolve();
       }
-    }, reject);
+      // }, reject);
+    }, () => {
+      console.log('NAVBAR VC - RENDER ONCE - REJECT (B)', myCounter);
+      reject();
+    });
   }
 }
 

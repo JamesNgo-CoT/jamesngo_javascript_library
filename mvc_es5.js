@@ -211,7 +211,14 @@ var VC = function () {
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
       if (this.$view != null && this.$view.is(':visible')) {
-        this.$view.fadeOut(400, resolve);
+        var viewCount = this.$view.length;
+        var viewCounter = 0;
+        this.$view.fadeOut(400, function () {
+          viewCounter += 1;
+          if (viewCounter == viewCount) {
+            resolve();
+          }
+        });
       } else {
         resolve();
       }
@@ -232,10 +239,15 @@ var VC = function () {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+      var myCounter = counter++;
+      console.log('VC - RENDER', myCounter);
 
       // STEP 2
       var step2 = function step2() {
-        _this6.render_always(resolve, reject);
+        _this6.render_always(function () {
+          console.log('VC - RENDER - RESOLVE', myCounter);
+          resolve();
+        }, reject);
       };
 
       // STEP 1
@@ -273,9 +285,21 @@ var VC = function () {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+      var myCounter = counter++;
+      console.log('VC - SHOW', myCounter);
+
       if (this.$view != null && !this.$view.is(':visible')) {
-        this.$view.fadeIn(400, resolve);
+        var viewCount = this.$view.length;
+        var viewCounter = 0;
+        this.$view.fadeIn(400, function () {
+          viewCounter += 1;
+          if (viewCounter == viewCount) {
+            console.log('VC - SHOW - RESOLVE (A)', myCounter);
+            resolve();
+          }
+        });
       } else {
+        console.log('VC - SHOW - RESOLVE (B)', myCounter);
         resolve();
       }
     }
@@ -349,6 +373,9 @@ var NavVC = function (_VC) {
       var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
       var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
+      var myCounter = counter++;
+      console.log('NAV VC - OPENVC', myCounter);
+
       if (this.vcs == null) {
         this.vcs = [];
       }
@@ -357,7 +384,10 @@ var NavVC = function (_VC) {
         this.vcs.splice(i, 1);
       }
       this.vcs.push(vc);
-      this.render(resolve, reject);
+      this.render(function () {
+        console.log('NAV VC - OPENVC - RESOLVE', myCounter);
+        resolve();
+      }, reject);
     }
   }, {
     key: 'render_always',
@@ -367,12 +397,18 @@ var NavVC = function (_VC) {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+      var myCounter = counter++;
+      console.log('NAV VC - RENDER ALWAYS', myCounter);
+
       if (this.vcs == null || this.vcs.length == 0) {
         if (this.defaultVC.vc == null) {
           this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
           this.defaultVC.vc.options = this.defaultVC.vcOptions;
         }
-        this.openVC(this.defaultVC.vc, resolve, reject);
+        this.openVC(this.defaultVC.vc, function () {
+          console.log('NAV VC - RENDER ALWAYS - RESOLVE (A)', myCounter);
+          resolve();
+        }, reject);
       } else {
 
         // STEP 2
@@ -380,7 +416,10 @@ var NavVC = function (_VC) {
           var topVC = _this9.vcs[_this9.vcs.length - 1];
           topVC.navVC = _this9;
           topVC.render(function () {
-            topVC.show(resolve, reject);
+            topVC.show(function () {
+              console.log('NAV VC - RENDER ALWAYS - RESOLVE (B)', myCounter);
+              resolve();
+            }, reject);
           }, reject);
         };
 
@@ -402,6 +441,8 @@ var NavVC = function (_VC) {
   return NavVC;
 }(VC);
 
+var counter = 0;
+
 /**
  Navigation Bar View Controller
  Property:
@@ -413,7 +454,6 @@ var NavVC = function (_VC) {
  - options
  - requireLoginVC
  */
-
 
 var NavbarVC = function (_NavVC) {
   _inherits(NavbarVC, _NavVC);
@@ -429,6 +469,9 @@ var NavbarVC = function (_NavVC) {
     value: function closeVC(vc) {
       var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
       var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+      var myCounter = counter++;
+      console.log('NAVBAR VC - CLOSE VC', myCounter);
 
       if (this.defaultVC.vc === vc) {
         this.defaultVC.vc = null;
@@ -461,7 +504,50 @@ var NavbarVC = function (_NavVC) {
           }
         }
       }
-      _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'closeVC', this).call(this, vc, resolve, reject);
+      // super.closeVC(vc, resolve, reject);
+      _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'closeVC', this).call(this, vc, function () {
+        console.log('NAVBAR VC - CLOSE VC - RESOLVE', myCounter);
+        resolve();
+      }, function () {
+        console.log('NAVBAR VC - CLOSE VC - REJECT', myCounter);
+        reject();
+      });
+    }
+  }, {
+    key: 'openVC',
+    value: function openVC(vc) {
+      var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+      var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+      var myCounter = counter++;
+      console.log('NAVBAR VC - OPEN VC', myCounter);
+
+      // super.openVC(vc, resolve, reject);
+      _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'openVC', this).call(this, vc, function () {
+        console.log('NAVBAR VC - OPEN VC - RESOLVE', myCounter);
+        resolve();
+      }, function () {
+        console.log('NAVBAR VC - OPEN VC - REJECT', myCounter);
+        reject();
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+      var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+      var myCounter = counter++;
+      console.log('NAVBAR VC - RENDER', myCounter);
+
+      // super.render(resolve, reject);
+      _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render', this).call(this, function () {
+        console.log('NAVBAR VC - RENDER - RESOLVE', myCounter);
+        resolve();
+      }, function () {
+        console.log('NAVBAR VC - RENDER - REJECT', myCounter);
+        reject();
+      });
     }
   }, {
     key: 'render_always',
@@ -471,21 +557,43 @@ var NavbarVC = function (_NavVC) {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
+      var myCounter = counter++;
+      console.log('NAVBAR VC - RENDER ALWAYS', myCounter);
 
       // Step 2
       var step2 = function step2() {
         _this11.render_always_login(function () {
           _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always', _this11).call(_this11, function () {
-            _this11.render_always_menu(resolve, reject);
-          }, reject);
-        }, reject);
+            // this.render_always_menu(resolve, reject);
+            _this11.render_always_menu(function () {
+              console.log('NAVBAR VC - RENDER ALWAYS - RESOLVE', myCounter);
+              resolve();
+            }, function () {
+              console.log('NAVBAR VC - RENDER ALWAYS - REJECT (A)', myCounter);
+              reject();
+            });
+          }, function () {
+            console.log('NAVBAR VC - RENDER ALWAYS - REJECT (B)', myCounter);
+            reject();
+          });
+        }, function () {
+          console.log('NAVBAR VC - RENDER ALWAYS - REJECT (C)', myCounter);
+          reject();
+        });
       };
 
       // Step 1
       var step1 = function step1() {
         if (_this11.requireLoginVC != null) {
-          _this11.requireLoginVC.vc.hide(step2, reject);
+          _this11.requireLoginVC.vc.hide(function () {
+            console.log('NAVBAR VC - RENDER ALWAYS - STEP 2 (A)', myCounter);
+            step2();
+          }, function () {
+            console.log('NAVBAR VC - RENDER ALWAYS - REJECT (D)', myCounter);
+            reject();
+          });
         } else {
+          console.log('NAVBAR VC - RENDER ALWAYS - STEP 2 (B)', myCounter);
           step2();
         }
       };
@@ -500,6 +608,9 @@ var NavbarVC = function (_NavVC) {
 
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+      var myCounter = counter++;
+      console.log('NAVBAR VC - RENDER ALWAYS LOGIN', myCounter);
 
       var $view_navbar_login = this.$view_navbar_login;
       $view_navbar_login.empty();
@@ -519,6 +630,8 @@ var NavbarVC = function (_NavVC) {
           });
         }
       }
+
+      console.log('NAVBAR VC - RENDER ALWAYS LOGIN - RESOLVE', myCounter);
       resolve();
     }
   }, {
@@ -528,6 +641,9 @@ var NavbarVC = function (_NavVC) {
 
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+      var myCounter = counter++;
+      console.log('NAVBAR VC - RENDER ALWAYS MENU', myCounter);
 
       var $view_navbar_menu = this.$view_navbar_menu;
       $view_navbar_menu.empty().append('\n\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t<li class="dropdown">\n\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t</ul>\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t');
@@ -617,7 +733,7 @@ var NavbarVC = function (_NavVC) {
           }
         }
       }
-
+      console.log('NAVBAR VC - RENDER ALWAYS MENU - RESOLVE', myCounter);
       resolve();
     }
   }, {
@@ -627,6 +743,9 @@ var NavbarVC = function (_NavVC) {
 
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+
+      var myCounter = counter++;
+      console.log('NAVBAR VC - RENDER ONCE', myCounter);
 
       this.ajaxSettings = {
         headers: {}
@@ -669,11 +788,23 @@ var NavbarVC = function (_NavVC) {
           _this14.requireLoginVC.vc = new _this14.vcClasses[_this14.requireLoginVC.vcClass]();
           _this14.requireLoginVC.navVC = _this14;
           _this14.requireLoginVC.vc.options = _this14.requireLoginVC.vcOptions;
-          _this14.requireLoginVC.vc.render(resolve, reject);
+          //this.requireLoginVC.vc.render(resolve, reject);
+          _this14.requireLoginVC.vc.render(function () {
+            console.log('NAVBAR VC - RENDER ONCE - RESOLVE (A)', myCounter);
+            resolve();
+          }, function () {
+            console.log('NAVBAR VC - RENDER ONCE - REJECT (A)', myCounter);
+            reject();
+          });
         } else {
+          console.log('NAVBAR VC - RENDER ONCE - RESOLVE (B)', myCounter);
           resolve();
         }
-      }, reject);
+        // }, reject);
+      }, function () {
+        console.log('NAVBAR VC - RENDER ONCE - REJECT (B)', myCounter);
+        reject();
+      });
     }
   }]);
 
