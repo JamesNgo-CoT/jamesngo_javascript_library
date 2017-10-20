@@ -341,13 +341,13 @@ var NavVC = function (_VC) {
 
       // STEP 3
       var step3 = function step3() {
-        // if (this.vcs != null && this.vcs.length != 0) {
-        //   const i = this.vcs.indexOf(vc);
-        //   if (i != -1) {
-        //     this.vcs.splice(i, 1);
-        //     this.render_always_menu(); // TODO - Movie splice to render
-        //   }
-        // }
+        if (_this8.vcs != null && _this8.vcs.length != 0) {
+          var i = _this8.vcs.indexOf(vc);
+          if (i != -1) {
+            _this8.vcs.splice(i, 1);
+            _this8.render_always_menu(); // TODO - Hmmm rendered twice...
+          }
+        }
 
         vc.remove(resolve, reject);
       };
@@ -433,10 +433,11 @@ var NavVC = function (_VC) {
         // STEP 1
         var step1 = function step1() {
           if (_this9.vcs.length > 1) {
-            _this9.vcs[_this9.vcs.length - 2].hide(function () {
-              _this9.vcs.splice(_this9.vcs.length - 2, 1);
-              step2();
-            }, reject);
+            // this.vcs[this.vcs.length - 2].hide(() => {
+            //   this.vcs.splice(this.vcs.length - 2, 1);
+            //   step2();
+            // }, reject);
+            _this9.vcs[_this9.vcs.length - 2].hide(step2, reject);
           } else {
             step2();
           }
