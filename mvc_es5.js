@@ -244,15 +244,10 @@ var VC = function () {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-      var myCounter = counter++;
-      console.log('VC - RENDER', myCounter);
 
       // STEP 2
       var step2 = function step2() {
-        _this6.render_always(function () {
-          console.log('VC - RENDER - RESOLVE', myCounter);
-          resolve();
-        }, reject);
+        _this6.render_always(resolve, reject);
       };
 
       // STEP 1
@@ -290,21 +285,16 @@ var VC = function () {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-      var myCounter = counter++;
-      console.log('VC - SHOW', myCounter);
-
       if (this.$view != null && !this.$view.is(':visible')) {
         var viewCount = this.$view.length;
         var viewCounter = 0;
         this.$view.fadeIn(400, function () {
           viewCounter += 1;
           if (viewCounter == viewCount) {
-            console.log('VC - SHOW - RESOLVE (A)', myCounter);
             resolve();
           }
         });
       } else {
-        console.log('VC - SHOW - RESOLVE (B)', myCounter);
         resolve();
       }
     }
@@ -380,9 +370,6 @@ var NavVC = function (_VC) {
       var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
       var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-      var myCounter = counter++;
-      console.log('NAV VC - OPENVC', myCounter);
-
       if (this.vcs == null) {
         this.vcs = [];
       }
@@ -391,10 +378,7 @@ var NavVC = function (_VC) {
         this.vcs.splice(i, 1);
       }
       this.vcs.push(vc);
-      this.render(function () {
-        console.log('NAV VC - OPENVC - RESOLVE', myCounter);
-        resolve();
-      }, reject);
+      this.render(resolve, reject);
     }
   }, {
     key: 'render_always',
@@ -404,18 +388,12 @@ var NavVC = function (_VC) {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-      var myCounter = counter++;
-      console.log('NAV VC - RENDER ALWAYS', myCounter);
-
       if (this.vcs == null || this.vcs.length == 0) {
         if (this.defaultVC.vc == null) {
           this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
           this.defaultVC.vc.options = this.defaultVC.vcOptions;
         }
-        this.openVC(this.defaultVC.vc, function () {
-          console.log('NAV VC - RENDER ALWAYS - RESOLVE (A)', myCounter);
-          resolve();
-        }, reject);
+        this.openVC(this.defaultVC.vc, resolve, reject);
       } else {
 
         // STEP 2
@@ -423,20 +401,13 @@ var NavVC = function (_VC) {
           var topVC = _this9.vcs[_this9.vcs.length - 1];
           topVC.navVC = _this9;
           topVC.render(function () {
-            topVC.show(function () {
-              console.log('NAV VC - RENDER ALWAYS - RESOLVE (B)', myCounter);
-              resolve();
-            }, reject);
+            topVC.show(resolve, reject);
           }, reject);
         };
 
         // STEP 1
         var step1 = function step1() {
           if (_this9.vcs.length > 1) {
-            // this.vcs[this.vcs.length - 2].hide(() => {
-            //   this.vcs.splice(this.vcs.length - 2, 1);
-            //   step2();
-            // }, reject);
             _this9.vcs[_this9.vcs.length - 2].hide(step2, reject);
           } else {
             step2();
@@ -452,8 +423,6 @@ var NavVC = function (_VC) {
   return NavVC;
 }(VC);
 
-var counter = 0;
-
 /**
  Navigation Bar View Controller
  Property:
@@ -465,6 +434,7 @@ var counter = 0;
  - options
  - requireLoginVC
  */
+
 
 var NavbarVC = function (_NavVC) {
   _inherits(NavbarVC, _NavVC);
@@ -480,9 +450,6 @@ var NavbarVC = function (_NavVC) {
     value: function closeVC(vc) {
       var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
       var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-
-      var myCounter = counter++;
-      console.log('NAVBAR VC - CLOSE VC', myCounter);
 
       if (this.defaultVC.vc === vc) {
         this.defaultVC.vc = null;
@@ -515,50 +482,7 @@ var NavbarVC = function (_NavVC) {
           }
         }
       }
-      // super.closeVC(vc, resolve, reject);
-      _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'closeVC', this).call(this, vc, function () {
-        console.log('NAVBAR VC - CLOSE VC - RESOLVE', myCounter);
-        resolve();
-      }, function () {
-        console.log('NAVBAR VC - CLOSE VC - REJECT', myCounter);
-        reject();
-      });
-    }
-  }, {
-    key: 'openVC',
-    value: function openVC(vc) {
-      var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-      var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-
-      var myCounter = counter++;
-      console.log('NAVBAR VC - OPEN VC', myCounter);
-
-      // super.openVC(vc, resolve, reject);
-      _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'openVC', this).call(this, vc, function () {
-        console.log('NAVBAR VC - OPEN VC - RESOLVE', myCounter);
-        resolve();
-      }, function () {
-        console.log('NAVBAR VC - OPEN VC - REJECT', myCounter);
-        reject();
-      });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-      var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-
-      var myCounter = counter++;
-      console.log('NAVBAR VC - RENDER', myCounter);
-
-      // super.render(resolve, reject);
-      _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render', this).call(this, function () {
-        console.log('NAVBAR VC - RENDER - RESOLVE', myCounter);
-        resolve();
-      }, function () {
-        console.log('NAVBAR VC - RENDER - REJECT', myCounter);
-        reject();
-      });
+      _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'closeVC', this).call(this, vc, resolve, reject);
     }
   }, {
     key: 'render_always',
@@ -568,43 +492,21 @@ var NavbarVC = function (_NavVC) {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
       var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
 
-      var myCounter = counter++;
-      console.log('NAVBAR VC - RENDER ALWAYS', myCounter);
 
       // Step 2
       var step2 = function step2() {
         _this11.render_always_login(function () {
           _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always', _this11).call(_this11, function () {
-            // this.render_always_menu(resolve, reject);
-            _this11.render_always_menu(function () {
-              console.log('NAVBAR VC - RENDER ALWAYS - RESOLVE', myCounter);
-              resolve();
-            }, function () {
-              console.log('NAVBAR VC - RENDER ALWAYS - REJECT (A)', myCounter);
-              reject();
-            });
-          }, function () {
-            console.log('NAVBAR VC - RENDER ALWAYS - REJECT (B)', myCounter);
-            reject();
-          });
-        }, function () {
-          console.log('NAVBAR VC - RENDER ALWAYS - REJECT (C)', myCounter);
-          reject();
-        });
+            _this11.render_always_menu(resolve, reject);
+          }, reject);
+        }, reject);
       };
 
       // Step 1
       var step1 = function step1() {
         if (_this11.requireLoginVC != null) {
-          _this11.requireLoginVC.vc.hide(function () {
-            console.log('NAVBAR VC - RENDER ALWAYS - STEP 2 (A)', myCounter);
-            step2();
-          }, function () {
-            console.log('NAVBAR VC - RENDER ALWAYS - REJECT (D)', myCounter);
-            reject();
-          });
+          _this11.requireLoginVC.vc.hide(step2, reject);
         } else {
-          console.log('NAVBAR VC - RENDER ALWAYS - STEP 2 (B)', myCounter);
           step2();
         }
       };
@@ -839,14 +741,6 @@ var RequireLoginVC = function (_VC2) {
   }
 
   _createClass(RequireLoginVC, [{
-    key: 'hide',
-    value: function hide() {
-      var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-      var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-
-      _get(RequireLoginVC.prototype.__proto__ || Object.getPrototypeOf(RequireLoginVC.prototype), 'hide', this).call(this, resolve, reject);
-    }
-  }, {
     key: 'render_once',
     value: function render_once() {
       var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};

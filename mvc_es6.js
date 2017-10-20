@@ -131,15 +131,10 @@ class VC {
     resolve();
   }
   render(resolve = () => {}, reject = () => {}) {
-    const myCounter = counter++;
-    console.log('VC - RENDER', myCounter);
 
     // STEP 2
     const step2 = () => {
-      this.render_always(() => {
-        console.log('VC - RENDER - RESOLVE', myCounter);
-        resolve();
-      }, reject);
+      this.render_always(resolve, reject);
     };
 
     // STEP 1
@@ -162,21 +157,16 @@ class VC {
     resolve();
   }
   show(resolve = () => {}, reject = () => {}) {
-    const myCounter = counter++;
-    console.log('VC - SHOW', myCounter);
-
     if (this.$view != null && !this.$view.is(':visible')) {
       const viewCount = this.$view.length;
       let viewCounter = 0;
       this.$view.fadeIn(400, () => {
         viewCounter += 1;
         if (viewCounter == viewCount) {
-          console.log('VC - SHOW - RESOLVE (A)', myCounter);
           resolve();
         }
       });
     } else {
-      console.log('VC - SHOW - RESOLVE (B)', myCounter);
       resolve();
     }
   }
@@ -227,9 +217,6 @@ class NavVC extends VC {
     step1();
   }
   openVC(vc, resolve = () => {}, reject = () => {}) {
-    const myCounter = counter++;
-    console.log('NAV VC - OPENVC', myCounter);
-
     if (this.vcs == null) {
       this.vcs = [];
     }
@@ -238,24 +225,15 @@ class NavVC extends VC {
       this.vcs.splice(i, 1);
     }
     this.vcs.push(vc);
-    this.render(() => {
-      console.log('NAV VC - OPENVC - RESOLVE', myCounter);
-      resolve();
-    }, reject);
+    this.render(resolve, reject);
   }
   render_always(resolve = () => {}, reject = () => {}) {
-    const myCounter = counter++;
-    console.log('NAV VC - RENDER ALWAYS', myCounter);
-
     if (this.vcs == null || this.vcs.length == 0) {
       if (this.defaultVC.vc == null) {
         this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
         this.defaultVC.vc.options = this.defaultVC.vcOptions;
       }
-      this.openVC(this.defaultVC.vc, () => {
-        console.log('NAV VC - RENDER ALWAYS - RESOLVE (A)', myCounter);
-        resolve();
-      }, reject);
+      this.openVC(this.defaultVC.vc, resolve, reject);
     } else {
 
       // STEP 2
@@ -263,20 +241,13 @@ class NavVC extends VC {
         const topVC = this.vcs[this.vcs.length - 1];
         topVC.navVC = this;
         topVC.render(() => {
-          topVC.show(() => {
-            console.log('NAV VC - RENDER ALWAYS - RESOLVE (B)', myCounter);
-            resolve();
-          }, reject);
+          topVC.show(resolve, reject);
         }, reject);
       };
 
       // STEP 1
       const step1 = () => {
         if (this.vcs.length > 1) {
-          // this.vcs[this.vcs.length - 2].hide(() => {
-          //   this.vcs.splice(this.vcs.length - 2, 1);
-          //   step2();
-          // }, reject);
           this.vcs[this.vcs.length - 2].hide(step2, reject);
         } else {
           step2();
@@ -288,8 +259,6 @@ class NavVC extends VC {
     }
   }
 }
-
-let counter = 0;
 
 /**
  Navigation Bar View Controller
@@ -304,9 +273,6 @@ let counter = 0;
  */
 class NavbarVC extends NavVC {
   closeVC(vc, resolve = () => {}, reject = () => {}) {
-    const myCounter = counter++;
-    console.log('NAVBAR VC - CLOSE VC', myCounter);
-
     if (this.defaultVC.vc === vc) {
       this.defaultVC.vc = null;
     }
@@ -317,79 +283,24 @@ class NavbarVC extends NavVC {
         }
       }
     }
-    // super.closeVC(vc, resolve, reject);
-    super.closeVC(vc, () => {
-      console.log('NAVBAR VC - CLOSE VC - RESOLVE', myCounter);
-      resolve();
-    }, () => {
-      console.log('NAVBAR VC - CLOSE VC - REJECT', myCounter);
-      reject();
-    });
-  }
-  openVC(vc, resolve = () => {}, reject = () => {}) {
-    const myCounter = counter++;
-    console.log('NAVBAR VC - OPEN VC', myCounter);
-
-    // super.openVC(vc, resolve, reject);
-    super.openVC(vc, () => {
-      console.log('NAVBAR VC - OPEN VC - RESOLVE', myCounter);
-      resolve();
-    }, () => {
-      console.log('NAVBAR VC - OPEN VC - REJECT', myCounter);
-      reject();
-    });
-  }
-  render(resolve = () => {}, reject = () => {}) {
-    const myCounter = counter++;
-    console.log('NAVBAR VC - RENDER', myCounter);
-
-    // super.render(resolve, reject);
-    super.render(() => {
-      console.log('NAVBAR VC - RENDER - RESOLVE', myCounter);
-      resolve();
-    }, () => {
-      console.log('NAVBAR VC - RENDER - REJECT', myCounter);
-      reject();
-    });
+    super.closeVC(vc, resolve, reject);
   }
   render_always(resolve = () => {}, reject = () => {}) {
-    const myCounter = counter++;
-    console.log('NAVBAR VC - RENDER ALWAYS', myCounter);
 
     // Step 2
     const step2 = () => {
       this.render_always_login(() => {
         super.render_always(() => {
-          // this.render_always_menu(resolve, reject);
-          this.render_always_menu(() => {
-            console.log('NAVBAR VC - RENDER ALWAYS - RESOLVE', myCounter);
-            resolve();
-          }, () => {
-            console.log('NAVBAR VC - RENDER ALWAYS - REJECT (A)', myCounter);
-            reject();
-          });
-        }, () => {
-          console.log('NAVBAR VC - RENDER ALWAYS - REJECT (B)', myCounter);
-          reject();
-        });
-      }, () => {
-        console.log('NAVBAR VC - RENDER ALWAYS - REJECT (C)', myCounter);
-        reject()
-      });
+          this.render_always_menu(resolve, reject);
+        }, reject);
+      }, reject);
     }
 
     // Step 1
     const step1 = () => {
       if (this.requireLoginVC != null) {
-        this.requireLoginVC.vc.hide(() => {
-          console.log('NAVBAR VC - RENDER ALWAYS - STEP 2 (A)', myCounter);
-          step2();
-        }, () => {
-          console.log('NAVBAR VC - RENDER ALWAYS - REJECT (D)', myCounter);
-          reject();
-        });
+        this.requireLoginVC.vc.hide(step2, reject);
       } else {
-        console.log('NAVBAR VC - RENDER ALWAYS - STEP 2 (B)', myCounter);
         step2();
       }
     }
@@ -578,9 +489,6 @@ class NavbarVC extends NavVC {
  - options
  */
 class RequireLoginVC extends VC {
-  hide(resolve = () => {}, reject = () => {}) {
-    super.hide(resolve, reject);
-  }
   render_once(resolve = () => {}, reject = () => {}) {
     const $view = this.$view = $(`
       <div>
