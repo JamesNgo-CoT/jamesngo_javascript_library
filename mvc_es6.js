@@ -106,6 +106,7 @@ class CotModelMC extends MC {
  View Controller
  Property:
  - $view
+ - renderedOnce
  */
 class VC {
   hide(resolve = () => {}, reject = () => {}) {
@@ -123,6 +124,10 @@ class VC {
     }
   }
   remove(resolve = () => {}, reject = () => {}) {
+    if (this.$view) {
+      this.$view.remove();
+      this.renderedOnce = false;
+    }
     resolve();
   }
   render(resolve = () => {}, reject = () => {}) {
@@ -192,8 +197,10 @@ class NavVC extends VC {
         const i = this.vcs.indexOf(vc);
         if (i != -1) {
           this.vcs.splice(i, 1);
+          this.render_always_menu(); // TODO - Movie splice to render
         }
       }
+
       vc.remove(resolve, reject);
     };
 
@@ -266,7 +273,10 @@ class NavVC extends VC {
       // STEP 1
       const step1 = () => {
         if (this.vcs.length > 1) {
-          this.vcs[this.vcs.length - 2].hide(step2, reject);
+          this.vcs[this.vcs.length - 2].hide(() => {
+            this.vcs.splice(this.vcs.length - 2, 1);
+            step2();
+          }, reject);
         } else {
           step2();
         }
