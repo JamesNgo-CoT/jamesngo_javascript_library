@@ -76,8 +76,13 @@ class MC {
  */
 class CotModelMC extends MC {
 	httpDelete(resolve = () => {}, reject = () => {}) {
-		this.model = this.cotModel.toJSON();
-		super.httpDelete(resolve, reject);
+		// this.model = this.cotModel.toJSON();
+		this.cotModel = new CotModel({
+			id: this.cotModel.get('id'),
+			__Status: 'DEL'
+		});
+		// super.httpDelete(resolve, reject);
+		this.httpPatch(resolve, reject);
 	}
 	httpGet(id, resolve = () => {}, reject = () => {}) {
 		super.httpGet(id, (data, textStatus, jqXHR) => {
