@@ -83,10 +83,18 @@
 						return column.filterString;
 					}).join(' and ') || null;
 
+					if (options['$filter']) {
+						retData['$filter'] = retData['$filter'] ? `(${retData['$filter']}) and ${options['$filter']}` : options['$filter'];
+					}
+
 					// $ORDERBY parameter.
 					retData['$orderby'] = data.order.map((order) => {
 						return `${data.columns[order.column].data} ${order.dir}`;
 					}).join(',') || null;
+
+					if (options['$orderby']) {
+						retData['$orderby'] = retData['$orderby'] ? `(${retData['$orderby']}),${options['$orderby']}` : options['$orderby'];
+					}
 
 					// $SEARCH parameter.
 					retData['$search'] = (() => data.search && data.search.value ? data.search.value : null)();
@@ -97,6 +105,10 @@
 					}).map((column) => {
 						return column.data;
 					}).join(',');
+
+					if (options['$select']) {
+						retData['$select'] = retData['$select'] ? `(${retData['$select']}),${options['$select']}` : options['$select'];
+					}
 
 					// $SKIP parameter.
 					retData['$skip'] = data.start;
