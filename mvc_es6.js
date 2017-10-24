@@ -1,423 +1,461 @@
-/**
- Model Controller
- Properties:
- - ajaxSettings
- - model
- - url
- */
+/** Model controller class. */
 class MC {
-	httpDelete(resolve = () => {}, reject = () => {}) {
-		this.model = {
-			id: this.model.id,
-			__Status: 'DEL'
-		}
-		this.httpPatch(resolve, reject);
-	}
-	httpGet(id, resolve = () => {}, reject = () => {}) {
-		$.ajax(`${this.url}('${id}')`, $.extend({
-			contentType: 'application/json; charset=UTF-8',
-			error: (jqXHR, textStatus, errorThrown) => {
-				reject(jqXHR, textStatus, errorThrown);
-			},
-			method: 'GET',
-			success: (data, textStatus, jqXHR) => {
-				this.model = data;
-				resolve(data, textStatus, jqXHR);
-			}
-		}, this.ajaxSettings));
-	}
-	httpPatch(resolve = () => {}, reject = () => {}) {
-		$.ajax(`${this.url}('${this.model.id}')`, $.extend({
-			contentType: 'application/json; charset=UTF-8',
-			data: JSON.stringify(this.model),
-			error: (jqXHR, textStatus, errorThrown) => {
-				reject(jqXHR, textStatus, errorThrown);
-			},
-			method: 'PATCH',
-			success: (data, textStatus, jqXHR) => {
-				resolve(data, textStatus, jqXHR);
-			}
-		}, this.ajaxSettings));
-	}
-	httpPost(resolve = () => {}, reject = () => {}) {
-		this.model.id = null;
-		$.ajax(this.url, $.extend({
-			contentType: 'application/json; charset=UTF-8',
-			data: JSON.stringify(this.model),
-			error: (jqXHR, textStatus, errorThrown) => {
-				reject(jqXHR, textStatus, errorThrown);
-			},
-			method: 'POST',
-			success: (data, textStatus, jqXHR) => {
-				this.model.id = jqXHR.getResponseHeader('OData-EntityID');
-				resolve(data, textStatus, jqXHR);
-			}
-		}, this.ajaxSettings));
-	}
-	httpPut(resolve = () => {}, reject = () => {}) {
-		$.ajax(`${this.url}('${this.model.id}')`, $.extend({
-			contentType: 'application/json; charset=UTF-8',
-			data: JSON.stringify(this.model),
-			error: (jqXHR, textStatus, errorThrown) => {
-				reject(jqXHR, textStatus, errorThrown);
-			},
-			method: 'PUT',
-			success: (data, textStatus, jqXHR) => {
-				resolve(data, textStatus, jqXHR);
-			}
-		}, this.ajaxSettings));
-	}
+
+  /**
+   * Creates a model controller.
+   * @param {object} model        - The model. Holds data.
+   * @param {string} url          - The url to an oData endpoint.
+   * @param {object} ajaxSettings - The jQuery.ajax settings.
+   */
+  constructor(model = {}, url, ajaxSettings) {
+    this.model = model;
+    this.url = url;
+    this.ajaxSettings = $({
+      contentType: 'application/json; charset=UTF-8'
+    }, ajaxSettings);
+  }
+
+  /** Perform a (fake) HTTP DELETE. Override to implement true HTTP DELETE.  */
+  httpDelete() {
+    this.model = {
+      id: this.model.id,
+      __Status: 'DEL'
+    }
+    return this.httpPatch();
+  }
+
+  /**
+   * Perform an HTTP GET and populate the model.
+   * @param {object} id - The record's ID to load.
+   */
+  httpGet(id) {
+    return new Promise((resolve, reject) => {
+      $.ajax($.extend({}, this.ajaxSettings, {
+        error: (errorThrown) => {
+          reject(errorThrown);
+        },
+        method: 'GET',
+        success: (data) => {
+          resolve(data);
+        },
+        url: `${this.url}('${id}')`
+      }));
+    }).then((data) => {
+      return this.model = data;
+    });
+  }
+
+  /** Perform an HTTP PATCH */
+  httpPatch() {
+    return new Promise((resolve, reject) => {
+      $.ajax($.extend({}, this.ajaxSettings, {
+        data: JSON.stringify(this.model),
+        error: (errorThrown) => {
+          reject(errorThrown);
+        },
+        method: 'PATCH',
+        success: (data) => {
+          resolve(data);
+        },
+        url: `${this.url}('${this.model.id}')`
+      }));
+    });
+  }
+
+  /** Perform an HTTP POST */
+  httpPost() {
+    return new Promise((resolve, reject) => {
+      this.model.id = null;
+      $.ajax($.extend({}, this.ajaxSettings, {
+        data: JSON.stringify(this.model),
+        error: (errorThrown) => {
+          reject(errorThrown);
+        },
+        method: 'POST',
+        success: (data) => {
+          resolve(data);
+        },
+        url: this.url
+      }));
+    }).then((data) => {
+      this.model.id = jqXHR.getResponseHeader('OData-EntityID');
+      return data;
+    });
+  }
+
+  /** Perform an HTTP PUT */
+  httpPut() {
+    return new Promise((resolve, reject) => {
+      $.ajax($.extend({}, this.ajaxSettings, {
+        data: JSON.stringify(this.model),
+        error: (errorThrown) => {
+          reject(errorThrown);
+        },
+        method: 'PUT',
+        success: (data) => {
+          resolve(data);
+        },
+        url: `${this.url}('${this.model.id}')`
+      }));
+    });
+  }
 }
 
-/**
- CotModel Model Controller
- Property:
- - cotModel
- */
-class CotModelMC extends MC {
-	httpDelete(resolve = () => {}, reject = () => {}) {
-		// this.model = this.cotModel.toJSON();
-		this.cotModel = new CotModel({
-			id: this.cotModel.get('id'),
-			__Status: 'DEL'
-		});
-		// super.httpDelete(resolve, reject);
-		this.httpPatch(resolve, reject);
-	}
-	httpGet(id, resolve = () => {}, reject = () => {}) {
-		super.httpGet(id, (data, textStatus, jqXHR) => {
-			this.cotModel.set(this.model);
-			resolve(data, textStatus, jqXHR);
-		}, reject);
-	}
-	httpPatch(resolve = () => {}, reject = () => {}) {
-		this.model = this.cotModel.toJSON();
-		super.httpPatch(resolve, reject);
-	}
-	httpPost(resolve = () => {}, reject = () => {}) {
-		this.model = this.cotModel.toJSON();
-		super.httpPost((data, textStatus, jqXHR) => {
-			this.cotModel.set('id', this.model.id);
-			resolve(data, textStatus, jqXHR);
-		}, reject);
-	}
-	httpPut(resolve = () => {}, reject = () => {}) {
-		this.model = this.cotModel.toJSON();
-		super.httpPut(resolve, reject);
-	}
+/** CotModel model controller class. */
+class BackboneModelMC extends MC {
+
+  /**
+   * Create a CotModel model controller.
+   * @param {Backbone.Model} bbModel - The model using Backbone.JS.
+   * @param {string} url             - The url to an oData endpoint.
+   * @param {object} ajaxSettings    - The jQuery.ajax settings.
+   */
+  constructor(bbModel, url, ajaxSettings) {
+    super(undefined, url, ajaxSettings);
+    this.bbModel = bbModel;
+  }
+
+  /** Perform a (fake) HTTP DELETE. Override to implement true HTTP DELETE.  */
+  httpDelete() {
+    const id = this.bbModel.get('id');
+    this.bbModel.clear();
+    this.bbModel.set({
+      id: id,
+      __Status: 'DEL'
+    });
+    return this.httpPatch();
+  }
+
+  /**
+   * Perform an HTTP GET and populate the model.
+   * @param {object} id - The record's ID to load.
+   */
+  httpGet(id) {
+    return super.httpGet(id).then((data) => {
+      this.bbModel.set(this.model);
+      return data;
+    });
+  }
+
+  /** Perform an HTTP PATCH */
+  httpPatch() {
+    this.model = this.bbModel.toJSON();
+    return super.httpPatch();
+  }
+
+  /** Perform an HTTP POST */
+  httpPost() {
+    this.model = this.bbModel.toJSON();
+    return super.httpPost().then((data) => {
+      this.bbModel.set('id', this.model.id);
+      return data;
+    });
+  }
+
+  /** Perform an HTTP PUT */
+  httpPut() {
+    this.model = this.bbModel.toJSON();
+    return super.httpPut();
+  }
 }
 
-/**
- View Controller
- Property:
- - $view
- - renderedOnce
- */
+/** View controller class. */
 class VC {
-	hide(resolve = () => {}, reject = () => {}) {
-		if (this.$view != null && this.$view.is(':visible')) {
-			const viewCount = this.$view.length;
-			let viewCounter = 0;
-			this.$view.fadeOut(400, () => {
-				viewCounter += 1;
-				if (viewCounter == viewCount) {
-					resolve();
-				}
-			});
-		} else {
-			resolve();
-		}
-	}
-	remove(resolve = () => {}, reject = () => {}) {
-		if (this.$view) {
-			this.$view.remove();
-			this.renderedOnce = false;
-		}
-		resolve();
-	}
-	render(resolve = () => {}, reject = () => {}) {
 
-		// STEP 2
-		const step2 = () => {
-			this.render_always(resolve, reject);
-		};
+  /** Create a view controller. */
+  constructor() {
+    this.$view = $('<div></div>');
+    this.renderedOnce = false;
+  }
 
-		// STEP 1
-		const step1 = () => {
-			if (this.renderedOnce != true) {
-				this.renderedOnce = true;
-				this.render_once(step2, reject)
-			} else {
-				step2();
-			}
-		};
+  /** Hide view controller's view. */
+  hide() {
+    return this.$view.fadeOut(400).promise();
+  }
 
-		// START
-		step1();
-	}
-	render_always(resolve = () => {}, reject = () => {}) {
-		resolve();
-	}
-	render_once(resolve = () => {}, reject = () => {}) {
-		resolve();
-	}
-	show(resolve = () => {}, reject = () => {}) {
-		if (this.$view != null && !this.$view.is(':visible')) {
-			const viewCount = this.$view.length;
-			let viewCounter = 0;
-			this.$view.fadeIn(400, () => {
-				viewCounter += 1;
-				if (viewCounter == viewCount) {
-					resolve();
-				}
-			});
-		} else {
-			resolve();
-		}
-	}
+  /** Remove view controller's view from the DOM. */
+  remove() {
+    return new Promise((resolve, reject) => {
+      this.$view.remove();
+      this.renderedOnce = false;
+      resolve();
+    });
+  }
+
+  /**
+   * Render view controller's view. Called to render changes on the view.
+   * @param {object} options
+   */
+  render(options = {}) {
+		// console.log('VC -> RENDER');
+
+    return new Promise((resolve, reject) => {
+      if (!this.renderedOnce) {
+        this.renderedOnce = true;
+        this.render_once(options).then(resolve, reject);
+      } else {
+        resolve();
+      }
+    }).then(() => {
+      return this.render_always(options);
+    });
+  }
+
+  /**
+   * Called by the view controller ever time the render method is called.
+   * @param {object} options
+   */
+  render_always(options = {}) {
+		// console.log('VC -> RENDER ALWAYS');
+
+    return Promise.resolve();
+  }
+
+  /**
+   * Called by the view controller the first time the render method is called.
+   * Use to append the view controller's view to the view target.
+   * @param {object} options
+   */
+  render_once(options = {}) {
+		// console.log('VC -> RENDER ONCE');
+
+    if (options.$target) {
+      $(options.$target).append(this.$view);
+    }
+    return Promise.resolve();
+  }
+
+  /** Show view controller's view. */
+  show() {
+    return this.$view.fadeIn(400).promise();
+  }
 }
 
 /**
- Navigation View Controller
- Property:
- - defaultVC
- - vcs
+ * Navigation View Controller Class.
+ * Help manage and navigate multiple view controllers.
  */
 class NavVC extends VC {
-	closeVC(vc, resolve = () => {}, reject = () => {}) {
 
-		// STEP 3
-		const step3 = () => {
-			if (this.vcs != null && this.vcs.length != 0) {
-				const i = this.vcs.indexOf(vc);
-				if (i != -1) {
-					this.vcs.splice(i, 1);
-					this.render_always_menu(); // TODO - Hmmm rendered twice...
-				}
-			}
+  /** Create a navigation view controller. */
+  constructor() {
+    super();
+    this.vcs = [];
+  }
 
-			vc.remove(resolve, reject);
-		};
+  closeVC(vc) {
+		// console.log('NAVVC -> CLOSE VC');
 
-		// STEP 2
-		const step2 = () => {
-			this.render(step3, reject);
-		}
+    return new Promise((resolve, reject) => {
+      // Step 1.
 
-		// STEP 1
-		const step1 = () => {
-			if (this.vcs != null && this.vcs.length != 0 && this.vcs[this.vcs.length - 1] === vc) {
-				this.vcs.pop();
-			}
-			if (this.vcs.length == 0) {
-				vc.hide(step2, reject);
-			} else {
-				const topVC = this.vcs.pop();
-				this.vcs.push(vc, topVC);
-				step2();
-			}
-		};
+      if (this.vcs.length > 0 && this.vcs[this.vcs.length - 1] === vc) {
+        this.vcs.pop();
+      }
 
-		// START
-		step1();
-	}
-	openVC(vc, resolve = () => {}, reject = () => {}) {
-		if (this.vcs == null) {
-			this.vcs = [];
-		}
-		const i = this.vcs.indexOf(vc);
-		if (i != -1) {
-			this.vcs.splice(i, 1);
-		}
-		this.vcs.push(vc);
-		this.render(resolve, reject);
-	}
-	render_always(resolve = () => {}, reject = () => {}) {
-		if (this.vcs == null || this.vcs.length == 0) {
-			if (this.defaultVC.vc == null) {
-				this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
-				this.defaultVC.vc.options = this.defaultVC.vcOptions;
-			}
-			this.openVC(this.defaultVC.vc, resolve, reject);
-		} else {
+      if (this.vcs.length == 0) {
+        vc.hide().then(() => {
+          resolve();
+        }, () => {
+          reject();
+        });
+      } else {
+        const topVC = this.vcs.pop();
+        this.vcs.push(vc, topVC);
+        resolve();
+      }
+    }).then(() => {
+      // Step 2.
 
-			// STEP 2
-			const step2 = () => {
-				const topVC = this.vcs[this.vcs.length - 1];
-				topVC.navVC = this;
-				topVC.render(() => {
-					topVC.show(resolve, reject);
-				}, reject);
-			};
+      return this.render();
+    }).then(() => {
+      // Step 3.
 
-			// STEP 1
-			const step1 = () => {
-				if (this.vcs.length > 1) {
-					this.vcs[this.vcs.length - 2].hide(step2, reject);
-				} else {
-					step2();
-				}
-			};
+      if (this.vcs.length > 0) {
+        const i = this.vcs.indexOf(vc);
+        if (i > -1) {
+          this.vcs.splice(i, 1);
+          return this.render_always_menu(); // TODO - Hmmm rendered twice...
+        }
+      }
 
-			// START
-			step1();
-		}
-	}
+      return Promise.resolve();
+    }).then(() => {
+      // Step 4.
+
+      return vc.remove();
+    });
+  }
+
+  openVC(vc, vcOptions) {
+		// console.log('NAVVC -> OPENVC');
+
+    const i = this.vcs.indexOf(vc);
+    if (i > -1) {
+      this.vcs.splice(i, 1);
+    }
+
+    vc.navVC = this;
+    this.vcs.push(vc);
+
+    return this.render({ vcOptions: vcOptions });
+  }
+
+  render_always(options = {}) {
+		// console.log('NAVVC -> RENDER ALWAYS');
+
+    if (this.vcs.length > 0) {
+      return new Promise((resolve, reject) => {
+				// console.log('Step 1.');
+        // Step 1.
+
+        if (this.vcs.length > 1) {
+          this.vcs[this.vcs.length - 2].hide().then(resolve, reject);
+        } else {
+          resolve();
+        }
+      }).then(() => {
+				// console.log('Step 2.');
+        // Step 2.
+
+        const topVC = this.vcs[this.vcs.length - 1];
+				// console.log('topVC', topVC);
+        return topVC.render(options.vcOptions).then(() => {
+					// console.log('topVC -> show');
+          return topVC.show();
+        });
+      });
+    }
+
+    return Promise.resolve();
+  }
 }
 
-/**
- Navigation Bar View Controller
- Property:
- - $view_navbar_login
- -
- -
- - defaultVC
- - menu
- - options
- - requireLoginVC
- */
+/** Navigation bar view controller class. */
 class NavbarVC extends NavVC {
-	closeVC(vc, resolve = () => {}, reject = () => {}) {
-		if (this.defaultVC.vc === vc) {
-			this.defaultVC.vc = null;
-		}
-		if (this.menu != null) {
-			for (const menu of this.menu) {
-				if (menu.vc === vc) {
-					menu.vc = null;
-				}
-			}
-		}
-		super.closeVC(vc, resolve, reject);
-	}
-	render_always(resolve = () => {}, reject = () => {}) {
 
-		// Step 2
-		const step2 = () => {
-			this.render_always_login(() => {
-				super.render_always(() => {
-					this.render_always_menu(resolve, reject);
-				}, reject);
-			}, reject);
-		}
+  /** Create a navigation bar view controller. */
+  constructor(vcClasses = {}, menu = [], cotLogin) {
+    super();
+    this.vcClasses = vcClasses;
+    this.menu = menu;
+    this.cotLogin = cotLogin;
 
-		// Step 1
-		const step1 = () => {
-			if (this.requireLoginVC != null) {
-				this.requireLoginVC.vc.hide(step2, reject);
-			} else {
-				step2();
-			}
-		}
+    this.ajaxSettings = {
+      headers: {}
+    }
+  }
 
-		// Start
-		step1();
-	}
-	render_always_login(resolve = () => {}, reject = () => {}) {
-		const $view_navbar_login = this.$view_navbar_login;
-		$view_navbar_login.empty();
+  /** Create a view controller. */
+  closeVC(vc) {
+		// console.log('NAVBARVC -> CLOSEVC');
 
-		if (this.cotLogin == null) {
-			// No UI
-		} else {
-			if (this.cotLogin.isLoggedIn()) {
-				$view_navbar_login.append(`
-						<form class="navbar-form navbar-left">
-							<p class="form-control-static">${this.cotLogin.username}</p>
-							<button class="btn btn-default btn-logout" type="button">Logout</button>
-						</form>
-				`).find('.btn-logout').on('click', (e) => {
-					e.preventDefault();
-					this.cotLogin.logout();
-				});
-			} else {
-				$view_navbar_login.append(`
-					<form class="navbar-form navbar-left">
-						<button class="btn btn-default btn-login" type="button">Login</button>
-					</form>
-				`).find('.btn-login').on('click', (e) => {
-					e.preventDefault();
-					this.cotLogin.showLogin();
-				});
-			}
-		}
+    for (const menu of this.menu) {
+      if (menu.vc === vc) {
+        menu.vc = null;
+        break;
+      }
+    }
 
-		resolve();
-	}
-	render_always_menu(resolve = () => {}, reject = () => {}) {
-		const $view_navbar_menu = this.$view_navbar_menu;
-		$view_navbar_menu.empty().append(`
-			<ul class="nav navbar-nav">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>
-					<ul class="dropdown-menu">
-					</ul>
-				</li>
-			</ul>
-		`);
+    return super.closeVC(vc);
+  }
 
-		const $dropDownMenu = $view_navbar_menu.find('ul.dropdown-menu');
+  render_always(options = {}) {
+		// console.log('NAVBARVC -> RENDER ALWAYS');
 
-		if (this.menu != null) {
-			for (const menu of this.menu) {
+    return this.render_always_login(options).then(() => {
+      return super.render_always(options);
+    }).then(() => {
+			// console.log('NAVBARVC -> RENDER ALWAYS -> CALL');
+      return this.render_always_menu(options);
+    });
+  }
+
+  render_always_login(options = {}) {
+		// console.log('NAVBARVC -> RENDER ALWAYS LOGIN');
+
+    this.$view_navbar_login.empty();
+
+    if (this.cotLogin == null) {
+      // No UI
+    } else {
+      if (this.cotLogin.isLoggedIn()) {
+        this.$view_navbar_login.append(`<form class="navbar-form navbar-left"><p class="form-control-static">${this.cotLogin.username}</p> <button class="btn btn-default btn-logout" type="button">Logout</button></form>`);
+
+        $('.btn-logout', this.$view_navbar_login).on('click', (e) => {
+          e.preventDefault();
+          this.cotLogin.logout();
+        });
+      } else {
+        this.$view_navbar_login.append('<form class="navbar-form navbar-left"><button class="btn btn-default btn-login" type="button">Login</button></form>');
+
+        $('.btn-login', this.$view_navbar_login).on('click', (e) => {
+          e.preventDefault();
+          this.cotLogin.showLogin();
+        });
+      }
+    }
+
+		// console.log('NAVBARVC -> RENDER ALWAYS LOGIN -> RESOLVE');
+    return Promise.resolve();
+  }
+
+  render_always_menu(options) {
+		// console.log('NAVBARVC -> RENDER ALWAYS MENU');
+
+    this.$view_navbar_menu.empty().append('<ul class="nav navbar-nav"><li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a><ul class="dropdown-menu"></ul></li></ul>');
+
+    const $dropDownMenu = $('ul.dropdown-menu', this.$view_navbar_menu);
+
+		// console.log(1);
+
+    if (this.menu != null) {
+      for (const menu of this.menu) {
 				const $menuItem = $(`<li><a href="#">${menu.title}</a></li>`);
-				$dropDownMenu.append($menuItem);
-				$menuItem.find('a').on('click', (e) => {
-					e.preventDefault();
-					if (menu.vc == null) {
-						menu.vc = new this.vcClasses[menu.vcClass]();
-						menu.vc.options = menu.vcOptions;
-					}
-					this.openVC(menu.vc);
-				});
-			}
-		}
+        $dropDownMenu.append($menuItem);
 
-		const vcs = this.vcs.filter((vc) => vc.title != null);
+        $('a', $menuItem).on('click', (e) => {
+          e.preventDefault();
+          if (menu.vc == null) {
+            menu.vc = new this.vcClasses[menu.vcClass]();
+            this.openVC(menu.vc, menu.vcOptions);
+          } else {
+            this.openVC(menu.vc);
+          }
+        });
+      }
+    }
 
-		if (this.menu != null & this.menu.length > 0 && vcs != null && vcs.length > 0) {
-			$dropDownMenu.append($('<li role="separator" class="divider"></li>'));
-		}
+		// console.log(2);
 
-		if (vcs != null) {
-			for (const vc of vcs) {
-				const $menuItem = $(`<li><a href="#">${vc.title || 'Untitled'}</a></li>`);
-				$dropDownMenu.append($menuItem);
-				$menuItem.find('a').on('click', (e) => {
-					e.preventDefault();
-					this.openVC(vc);
-				});
-			}
-		}
+    const vcs = this.vcs.filter((vc) => vc.title != null);
 
-		resolve();
-	}
-	render_once(resolve = () => {}, reject = () => {}) {
-		this.ajaxSettings = {
-			headers: {}
-		}
+    if (this.menu != null & this.menu.length > 0 && vcs != null && vcs.length > 0) {
+      $dropDownMenu.append($('<li role="separator" class="divider"></li>'));
+    }
 
-		super.render_once(() => {
+		// console.log(3);
 
-			// SET UP COTLOGIN
-			if (this.cotLogin != null) {
-				const setLog = () => {
-					if (this.cotLogin.isLoggedIn()) {
-						// this.ajaxSettings.headers.Authorization = `AuthSession ${this.cotLogin.sid}`;
-						this.ajaxSettings.headers.Authorization = this.cotLogin.sid;
-					}
-				};
+    if (vcs != null) {
+      for (const vc of vcs) {
+        const $menuItem = $(`<li><a href="#">${vc.title || 'Untitled'}</a></li>`);
+        $dropDownMenu.append($menuItem);
+        $('a', $menuItem).on('click', (e) => {
+          e.preventDefault();
+          this.openVC(vc);
+        });
+      }
+    }
 
-				this.cotLogin.options.onLogin = () => {
-					setLog();
-					this.render();
-				}
+		// console.log('NAVBARVC -> RENDER ALWAYS MENU -> RESOLVE');
+    return Promise.resolve();
+  }
 
-				setLog();
-			}
+  render_once(options) {
+		// console.log('NAVBARVC -> RENDER ONCE');
 
-			// VIEW
-			const $view = this.$view = $(`
+    return this.render_once_login(options).then(() => {
+      this.$view = $(`
 				<nav class="navbar navbar-default navvc">
 					<div class="container-fluid">
 						<div class="navbar-header">
@@ -443,44 +481,46 @@ class NavbarVC extends NavVC {
 				</nav>
 			`);
 
-			this.$view_navbar_brand = $('.navbar-brand', $view);
-			this.$view_navbar_vc_ui = $('.navbar-vc-ui', $view);
-			this.$view_navbar_menu = $('.navbar-menu', $view);
-			this.$view_navbar_login = $('.navbar-login', $view);
+      this.$view_navbar_brand = $('.navbar-brand', this.$view);
+      this.$view_navbar_vc_ui = $('.navbar-vc-ui', this.$view);
+      this.$view_navbar_menu = $('.navbar-menu', this.$view);
+      this.$view_navbar_login = $('.navbar-login', this.$view);
 
-			// LOCK ICON
-			$('.navbar-lock', $view).append($('.securesite > img'));
+      // LOCK ICON
+      $('.navbar-lock', this.$view).append($('.securesite > img'));
 
-			// APPEND TO HTML
-			this.options.$placeholder.append(this.$view);
+      return super.render_once(options);
+    });
+  }
 
-			if (this.requireLoginVC != null) {
-				this.requireLoginVC.vc = new this.vcClasses[this.requireLoginVC.vcClass]();
-				this.requireLoginVC.navVC = this;
-				this.requireLoginVC.vc.options = this.requireLoginVC.vcOptions;
-				this.requireLoginVC.vc.render(resolve, reject);
+  render_once_login(options = {}) {
+		// console.log('NAVBARVC -> RENDER ONCE LOGIN');
 
-			} else {
-				resolve();
-			}
-		}, reject);
-	}
+    if (this.cotLogin) {
+      if (this.cotLogin.isLoggedIn()) {
+        // this.ajaxSettings.headers.Authorization = `AuthSession ${cotLogin.sid}`;
+        this.ajaxSettings.headers.Authorization = this.cotLogin.sid;
+      }
+      this.cotLogin.options.onLogin = () => {
+        if (this.cotLogin.isLoggedIn()) {
+          this.ajaxSettings.headers.Authorization = this.cotLogin.sid;
+        }
+        this.render();
+      }
+    }
+
+    return Promise.resolve();
+  }
 }
 
-/**
- Require Login View Controller
- Property:
- - options
- */
+/** Require Login View Controller */
 class RequireLoginVC extends VC {
-	render_once(resolve = () => {}, reject = () => {}) {
-		const $view = this.$view = $(`
+  render_once(options = {}) {
+    this.$view = $(`
 			<div>
 				<p>Please login</p>
 			</div>
 		`);
-		this.options.$placeholder.append($view);
-		this.$view.hide();
-		resolve();
-	}
+    return super.render_once(options);
+  }
 }

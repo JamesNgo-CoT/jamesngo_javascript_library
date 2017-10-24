@@ -10,731 +10,749 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- Model Controller
- Properties:
- - ajaxSettings
- - model
- - url
- */
+/** Model controller class. */
 var MC = function () {
-	function MC() {
-		_classCallCheck(this, MC);
-	}
 
-	_createClass(MC, [{
-		key: 'httpDelete',
-		value: function httpDelete() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  /**
+   * Creates a model controller.
+   * @param {object} model        - The model. Holds data.
+   * @param {string} url          - The url to an oData endpoint.
+   * @param {object} ajaxSettings - The jQuery.ajax settings.
+   */
+  function MC() {
+    var model = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var url = arguments[1];
+    var ajaxSettings = arguments[2];
 
-			this.model = {
-				id: this.model.id,
-				__Status: 'DEL'
-			};
-			this.httpPatch(resolve, reject);
-		}
-	}, {
-		key: 'httpGet',
-		value: function httpGet(id) {
-			var _this = this;
+    _classCallCheck(this, MC);
 
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+    this.model = model;
+    this.url = url;
+    this.ajaxSettings = $({
+      contentType: 'application/json; charset=UTF-8'
+    }, ajaxSettings);
+  }
 
-			$.ajax(this.url + '(\'' + id + '\')', $.extend({
-				contentType: 'application/json; charset=UTF-8',
-				error: function error(jqXHR, textStatus, errorThrown) {
-					reject(jqXHR, textStatus, errorThrown);
-				},
-				method: 'GET',
-				success: function success(data, textStatus, jqXHR) {
-					_this.model = data;
-					resolve(data, textStatus, jqXHR);
-				}
-			}, this.ajaxSettings));
-		}
-	}, {
-		key: 'httpPatch',
-		value: function httpPatch() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  /** Perform a (fake) HTTP DELETE. Override to implement true HTTP DELETE.  */
 
-			$.ajax(this.url + '(\'' + this.model.id + '\')', $.extend({
-				contentType: 'application/json; charset=UTF-8',
-				data: JSON.stringify(this.model),
-				error: function error(jqXHR, textStatus, errorThrown) {
-					reject(jqXHR, textStatus, errorThrown);
-				},
-				method: 'PATCH',
-				success: function success(data, textStatus, jqXHR) {
-					resolve(data, textStatus, jqXHR);
-				}
-			}, this.ajaxSettings));
-		}
-	}, {
-		key: 'httpPost',
-		value: function httpPost() {
-			var _this2 = this;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  _createClass(MC, [{
+    key: 'httpDelete',
+    value: function httpDelete() {
+      this.model = {
+        id: this.model.id,
+        __Status: 'DEL'
+      };
+      return this.httpPatch();
+    }
 
-			this.model.id = null;
-			$.ajax(this.url, $.extend({
-				contentType: 'application/json; charset=UTF-8',
-				data: JSON.stringify(this.model),
-				error: function error(jqXHR, textStatus, errorThrown) {
-					reject(jqXHR, textStatus, errorThrown);
-				},
-				method: 'POST',
-				success: function success(data, textStatus, jqXHR) {
-					_this2.model.id = jqXHR.getResponseHeader('OData-EntityID');
-					resolve(data, textStatus, jqXHR);
-				}
-			}, this.ajaxSettings));
-		}
-	}, {
-		key: 'httpPut',
-		value: function httpPut() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+    /**
+     * Perform an HTTP GET and populate the model.
+     * @param {object} id - The record's ID to load.
+     */
 
-			$.ajax(this.url + '(\'' + this.model.id + '\')', $.extend({
-				contentType: 'application/json; charset=UTF-8',
-				data: JSON.stringify(this.model),
-				error: function error(jqXHR, textStatus, errorThrown) {
-					reject(jqXHR, textStatus, errorThrown);
-				},
-				method: 'PUT',
-				success: function success(data, textStatus, jqXHR) {
-					resolve(data, textStatus, jqXHR);
-				}
-			}, this.ajaxSettings));
-		}
-	}]);
+  }, {
+    key: 'httpGet',
+    value: function httpGet(id) {
+      var _this = this;
 
-	return MC;
+      return new Promise(function (resolve, reject) {
+        $.ajax($.extend({}, _this.ajaxSettings, {
+          error: function error(errorThrown) {
+            reject(errorThrown);
+          },
+          method: 'GET',
+          success: function success(data) {
+            resolve(data);
+          },
+          url: _this.url + '(\'' + id + '\')'
+        }));
+      }).then(function (data) {
+        return _this.model = data;
+      });
+    }
+
+    /** Perform an HTTP PATCH */
+
+  }, {
+    key: 'httpPatch',
+    value: function httpPatch() {
+      var _this2 = this;
+
+      return new Promise(function (resolve, reject) {
+        $.ajax($.extend({}, _this2.ajaxSettings, {
+          data: JSON.stringify(_this2.model),
+          error: function error(errorThrown) {
+            reject(errorThrown);
+          },
+          method: 'PATCH',
+          success: function success(data) {
+            resolve(data);
+          },
+          url: _this2.url + '(\'' + _this2.model.id + '\')'
+        }));
+      });
+    }
+
+    /** Perform an HTTP POST */
+
+  }, {
+    key: 'httpPost',
+    value: function httpPost() {
+      var _this3 = this;
+
+      return new Promise(function (resolve, reject) {
+        _this3.model.id = null;
+        $.ajax($.extend({}, _this3.ajaxSettings, {
+          data: JSON.stringify(_this3.model),
+          error: function error(errorThrown) {
+            reject(errorThrown);
+          },
+          method: 'POST',
+          success: function success(data) {
+            resolve(data);
+          },
+          url: _this3.url
+        }));
+      }).then(function (data) {
+        _this3.model.id = jqXHR.getResponseHeader('OData-EntityID');
+        return data;
+      });
+    }
+
+    /** Perform an HTTP PUT */
+
+  }, {
+    key: 'httpPut',
+    value: function httpPut() {
+      var _this4 = this;
+
+      return new Promise(function (resolve, reject) {
+        $.ajax($.extend({}, _this4.ajaxSettings, {
+          data: JSON.stringify(_this4.model),
+          error: function error(errorThrown) {
+            reject(errorThrown);
+          },
+          method: 'PUT',
+          success: function success(data) {
+            resolve(data);
+          },
+          url: _this4.url + '(\'' + _this4.model.id + '\')'
+        }));
+      });
+    }
+  }]);
+
+  return MC;
 }();
 
-/**
- CotModel Model Controller
- Property:
- - cotModel
- */
+/** CotModel model controller class. */
 
 
-var CotModelMC = function (_MC) {
-	_inherits(CotModelMC, _MC);
+var BackboneModelMC = function (_MC) {
+  _inherits(BackboneModelMC, _MC);
 
-	function CotModelMC() {
-		_classCallCheck(this, CotModelMC);
+  /**
+   * Create a CotModel model controller.
+   * @param {Backbone.Model} bbModel - The model using Backbone.JS.
+   * @param {string} url             - The url to an oData endpoint.
+   * @param {object} ajaxSettings    - The jQuery.ajax settings.
+   */
+  function BackboneModelMC(bbModel, url, ajaxSettings) {
+    _classCallCheck(this, BackboneModelMC);
 
-		return _possibleConstructorReturn(this, (CotModelMC.__proto__ || Object.getPrototypeOf(CotModelMC)).apply(this, arguments));
-	}
+    var _this5 = _possibleConstructorReturn(this, (BackboneModelMC.__proto__ || Object.getPrototypeOf(BackboneModelMC)).call(this, undefined, url, ajaxSettings));
 
-	_createClass(CotModelMC, [{
-		key: 'httpDelete',
-		value: function httpDelete() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+    _this5.bbModel = bbModel;
+    return _this5;
+  }
 
-			// this.model = this.cotModel.toJSON();
-			this.cotModel = new CotModel({
-				id: this.cotModel.get('id'),
-				__Status: 'DEL'
-			});
-			// super.httpDelete(resolve, reject);
-			this.httpPatch(resolve, reject);
-		}
-	}, {
-		key: 'httpGet',
-		value: function httpGet(id) {
-			var _this4 = this;
+  /** Perform a (fake) HTTP DELETE. Override to implement true HTTP DELETE.  */
 
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
 
-			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpGet', this).call(this, id, function (data, textStatus, jqXHR) {
-				_this4.cotModel.set(_this4.model);
-				resolve(data, textStatus, jqXHR);
-			}, reject);
-		}
-	}, {
-		key: 'httpPatch',
-		value: function httpPatch() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  _createClass(BackboneModelMC, [{
+    key: 'httpDelete',
+    value: function httpDelete() {
+      var id = this.bbModel.get('id');
+      this.bbModel.clear();
+      this.bbModel.set({
+        id: id,
+        __Status: 'DEL'
+      });
+      return this.httpPatch();
+    }
 
-			this.model = this.cotModel.toJSON();
-			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPatch', this).call(this, resolve, reject);
-		}
-	}, {
-		key: 'httpPost',
-		value: function httpPost() {
-			var _this5 = this;
+    /**
+     * Perform an HTTP GET and populate the model.
+     * @param {object} id - The record's ID to load.
+     */
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  }, {
+    key: 'httpGet',
+    value: function httpGet(id) {
+      var _this6 = this;
 
-			this.model = this.cotModel.toJSON();
-			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPost', this).call(this, function (data, textStatus, jqXHR) {
-				_this5.cotModel.set('id', _this5.model.id);
-				resolve(data, textStatus, jqXHR);
-			}, reject);
-		}
-	}, {
-		key: 'httpPut',
-		value: function httpPut() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+      return _get(BackboneModelMC.prototype.__proto__ || Object.getPrototypeOf(BackboneModelMC.prototype), 'httpGet', this).call(this, id).then(function (data) {
+        _this6.bbModel.set(_this6.model);
+        return data;
+      });
+    }
 
-			this.model = this.cotModel.toJSON();
-			_get(CotModelMC.prototype.__proto__ || Object.getPrototypeOf(CotModelMC.prototype), 'httpPut', this).call(this, resolve, reject);
-		}
-	}]);
+    /** Perform an HTTP PATCH */
 
-	return CotModelMC;
+  }, {
+    key: 'httpPatch',
+    value: function httpPatch() {
+      this.model = this.bbModel.toJSON();
+      return _get(BackboneModelMC.prototype.__proto__ || Object.getPrototypeOf(BackboneModelMC.prototype), 'httpPatch', this).call(this);
+    }
+
+    /** Perform an HTTP POST */
+
+  }, {
+    key: 'httpPost',
+    value: function httpPost() {
+      var _this7 = this;
+
+      this.model = this.bbModel.toJSON();
+      return _get(BackboneModelMC.prototype.__proto__ || Object.getPrototypeOf(BackboneModelMC.prototype), 'httpPost', this).call(this).then(function (data) {
+        _this7.bbModel.set('id', _this7.model.id);
+        return data;
+      });
+    }
+
+    /** Perform an HTTP PUT */
+
+  }, {
+    key: 'httpPut',
+    value: function httpPut() {
+      this.model = this.bbModel.toJSON();
+      return _get(BackboneModelMC.prototype.__proto__ || Object.getPrototypeOf(BackboneModelMC.prototype), 'httpPut', this).call(this);
+    }
+  }]);
+
+  return BackboneModelMC;
 }(MC);
 
-/**
- View Controller
- Property:
- - $view
- - renderedOnce
- */
+/** View controller class. */
 
 
 var VC = function () {
-	function VC() {
-		_classCallCheck(this, VC);
-	}
 
-	_createClass(VC, [{
-		key: 'hide',
-		value: function hide() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  /** Create a view controller. */
+  function VC() {
+    _classCallCheck(this, VC);
 
-			if (this.$view != null && this.$view.is(':visible')) {
-				var viewCount = this.$view.length;
-				var viewCounter = 0;
-				this.$view.fadeOut(400, function () {
-					viewCounter += 1;
-					if (viewCounter == viewCount) {
-						resolve();
-					}
-				});
-			} else {
-				resolve();
-			}
-		}
-	}, {
-		key: 'remove',
-		value: function remove() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+    this.$view = $('<div></div>');
+    this.renderedOnce = false;
+  }
 
-			if (this.$view) {
-				this.$view.remove();
-				this.renderedOnce = false;
-			}
-			resolve();
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			var _this6 = this;
-
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  /** Hide view controller's view. */
 
 
-			// STEP 2
-			var step2 = function step2() {
-				_this6.render_always(resolve, reject);
-			};
+  _createClass(VC, [{
+    key: 'hide',
+    value: function hide() {
+      return this.$view.fadeOut(400).promise();
+    }
 
-			// STEP 1
-			var step1 = function step1() {
-				if (_this6.renderedOnce != true) {
-					_this6.renderedOnce = true;
-					_this6.render_once(step2, reject);
-				} else {
-					step2();
-				}
-			};
+    /** Remove view controller's view from the DOM. */
 
-			// START
-			step1();
-		}
-	}, {
-		key: 'render_always',
-		value: function render_always() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  }, {
+    key: 'remove',
+    value: function remove() {
+      var _this8 = this;
 
-			resolve();
-		}
-	}, {
-		key: 'render_once',
-		value: function render_once() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+      return new Promise(function (resolve, reject) {
+        _this8.$view.remove();
+        _this8.renderedOnce = false;
+        resolve();
+      });
+    }
 
-			resolve();
-		}
-	}, {
-		key: 'show',
-		value: function show() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+    /**
+     * Render view controller's view. Called to render changes on the view.
+     * @param {object} options
+     */
 
-			if (this.$view != null && !this.$view.is(':visible')) {
-				var viewCount = this.$view.length;
-				var viewCounter = 0;
-				this.$view.fadeIn(400, function () {
-					viewCounter += 1;
-					if (viewCounter == viewCount) {
-						resolve();
-					}
-				});
-			} else {
-				resolve();
-			}
-		}
-	}]);
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this9 = this;
 
-	return VC;
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      // console.log('VC -> RENDER');
+
+      return new Promise(function (resolve, reject) {
+        if (!_this9.renderedOnce) {
+          _this9.renderedOnce = true;
+          _this9.render_once(options).then(resolve, reject);
+        } else {
+          resolve();
+        }
+      }).then(function () {
+        return _this9.render_always(options);
+      });
+    }
+
+    /**
+     * Called by the view controller ever time the render method is called.
+     * @param {object} options
+     */
+
+  }, {
+    key: 'render_always',
+    value: function render_always() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      // console.log('VC -> RENDER ALWAYS');
+
+      return Promise.resolve();
+    }
+
+    /**
+     * Called by the view controller the first time the render method is called.
+     * Use to append the view controller's view to the view target.
+     * @param {object} options
+     */
+
+  }, {
+    key: 'render_once',
+    value: function render_once() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      // console.log('VC -> RENDER ONCE');
+
+      if (options.$target) {
+        $(options.$target).append(this.$view);
+      }
+      return Promise.resolve();
+    }
+
+    /** Show view controller's view. */
+
+  }, {
+    key: 'show',
+    value: function show() {
+      return this.$view.fadeIn(400).promise();
+    }
+  }]);
+
+  return VC;
 }();
 
 /**
- Navigation View Controller
- Property:
- - defaultVC
- - vcs
+ * Navigation View Controller Class.
+ * Help manage and navigate multiple view controllers.
  */
 
 
 var NavVC = function (_VC) {
-	_inherits(NavVC, _VC);
+  _inherits(NavVC, _VC);
 
-	function NavVC() {
-		_classCallCheck(this, NavVC);
+  /** Create a navigation view controller. */
+  function NavVC() {
+    _classCallCheck(this, NavVC);
 
-		return _possibleConstructorReturn(this, (NavVC.__proto__ || Object.getPrototypeOf(NavVC)).apply(this, arguments));
-	}
+    var _this10 = _possibleConstructorReturn(this, (NavVC.__proto__ || Object.getPrototypeOf(NavVC)).call(this));
 
-	_createClass(NavVC, [{
-		key: 'closeVC',
-		value: function closeVC(vc) {
-			var _this8 = this;
+    _this10.vcs = [];
+    return _this10;
+  }
 
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+  _createClass(NavVC, [{
+    key: 'closeVC',
+    value: function closeVC(vc) {
+      var _this11 = this;
 
+      // console.log('NAVVC -> CLOSE VC');
 
-			// STEP 3
-			var step3 = function step3() {
-				if (_this8.vcs != null && _this8.vcs.length != 0) {
-					var i = _this8.vcs.indexOf(vc);
-					if (i != -1) {
-						_this8.vcs.splice(i, 1);
-						_this8.render_always_menu(); // TODO - Hmmm rendered twice...
-					}
-				}
+      return new Promise(function (resolve, reject) {
+        // Step 1.
 
-				vc.remove(resolve, reject);
-			};
+        if (_this11.vcs.length > 0 && _this11.vcs[_this11.vcs.length - 1] === vc) {
+          _this11.vcs.pop();
+        }
 
-			// STEP 2
-			var step2 = function step2() {
-				_this8.render(step3, reject);
-			};
+        if (_this11.vcs.length == 0) {
+          vc.hide().then(function () {
+            resolve();
+          }, function () {
+            reject();
+          });
+        } else {
+          var topVC = _this11.vcs.pop();
+          _this11.vcs.push(vc, topVC);
+          resolve();
+        }
+      }).then(function () {
+        // Step 2.
 
-			// STEP 1
-			var step1 = function step1() {
-				if (_this8.vcs != null && _this8.vcs.length != 0 && _this8.vcs[_this8.vcs.length - 1] === vc) {
-					_this8.vcs.pop();
-				}
-				if (_this8.vcs.length == 0) {
-					vc.hide(step2, reject);
-				} else {
-					var topVC = _this8.vcs.pop();
-					_this8.vcs.push(vc, topVC);
-					step2();
-				}
-			};
+        return _this11.render();
+      }).then(function () {
+        // Step 3.
 
-			// START
-			step1();
-		}
-	}, {
-		key: 'openVC',
-		value: function openVC(vc) {
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+        if (_this11.vcs.length > 0) {
+          var i = _this11.vcs.indexOf(vc);
+          if (i > -1) {
+            _this11.vcs.splice(i, 1);
+            return _this11.render_always_menu(); // TODO - Hmmm rendered twice...
+          }
+        }
 
-			if (this.vcs == null) {
-				this.vcs = [];
-			}
-			var i = this.vcs.indexOf(vc);
-			if (i != -1) {
-				this.vcs.splice(i, 1);
-			}
-			this.vcs.push(vc);
-			this.render(resolve, reject);
-		}
-	}, {
-		key: 'render_always',
-		value: function render_always() {
-			var _this9 = this;
+        return Promise.resolve();
+      }).then(function () {
+        // Step 4.
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+        return vc.remove();
+      });
+    }
+  }, {
+    key: 'openVC',
+    value: function openVC(vc, vcOptions) {
+      // console.log('NAVVC -> OPENVC');
 
-			if (this.vcs == null || this.vcs.length == 0) {
-				if (this.defaultVC.vc == null) {
-					this.defaultVC.vc = new this.vcClasses[this.defaultVC.vcClass]();
-					this.defaultVC.vc.options = this.defaultVC.vcOptions;
-				}
-				this.openVC(this.defaultVC.vc, resolve, reject);
-			} else {
+      var i = this.vcs.indexOf(vc);
+      if (i > -1) {
+        this.vcs.splice(i, 1);
+      }
 
-				// STEP 2
-				var step2 = function step2() {
-					var topVC = _this9.vcs[_this9.vcs.length - 1];
-					topVC.navVC = _this9;
-					topVC.render(function () {
-						topVC.show(resolve, reject);
-					}, reject);
-				};
+      vc.navVC = this;
+      this.vcs.push(vc);
 
-				// STEP 1
-				var step1 = function step1() {
-					if (_this9.vcs.length > 1) {
-						_this9.vcs[_this9.vcs.length - 2].hide(step2, reject);
-					} else {
-						step2();
-					}
-				};
+      return this.render({ vcOptions: vcOptions });
+    }
+  }, {
+    key: 'render_always',
+    value: function render_always() {
+      var _this12 = this;
 
-				// START
-				step1();
-			}
-		}
-	}]);
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-	return NavVC;
+      // console.log('NAVVC -> RENDER ALWAYS');
+
+      if (this.vcs.length > 0) {
+        return new Promise(function (resolve, reject) {
+          // console.log('Step 1.');
+          // Step 1.
+
+          if (_this12.vcs.length > 1) {
+            _this12.vcs[_this12.vcs.length - 2].hide().then(resolve, reject);
+          } else {
+            resolve();
+          }
+        }).then(function () {
+          // console.log('Step 2.');
+          // Step 2.
+
+          var topVC = _this12.vcs[_this12.vcs.length - 1];
+          // console.log('topVC', topVC);
+          return topVC.render(options.vcOptions).then(function () {
+            // console.log('topVC -> show');
+            return topVC.show();
+          });
+        });
+      }
+
+      return Promise.resolve();
+    }
+  }]);
+
+  return NavVC;
 }(VC);
 
-/**
- Navigation Bar View Controller
- Property:
- - $view_navbar_login
- -
- -
- - defaultVC
- - menu
- - options
- - requireLoginVC
- */
+/** Navigation bar view controller class. */
 
 
 var NavbarVC = function (_NavVC) {
-	_inherits(NavbarVC, _NavVC);
+  _inherits(NavbarVC, _NavVC);
 
-	function NavbarVC() {
-		_classCallCheck(this, NavbarVC);
+  /** Create a navigation bar view controller. */
+  function NavbarVC() {
+    var vcClasses = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var menu = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+    var cotLogin = arguments[2];
 
-		return _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).apply(this, arguments));
-	}
+    _classCallCheck(this, NavbarVC);
 
-	_createClass(NavbarVC, [{
-		key: 'closeVC',
-		value: function closeVC(vc) {
-			var resolve = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-			var reject = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+    var _this13 = _possibleConstructorReturn(this, (NavbarVC.__proto__ || Object.getPrototypeOf(NavbarVC)).call(this));
 
-			if (this.defaultVC.vc === vc) {
-				this.defaultVC.vc = null;
-			}
-			if (this.menu != null) {
-				var _iteratorNormalCompletion = true;
-				var _didIteratorError = false;
-				var _iteratorError = undefined;
+    _this13.vcClasses = vcClasses;
+    _this13.menu = menu;
+    _this13.cotLogin = cotLogin;
 
-				try {
-					for (var _iterator = this.menu[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-						var menu = _step.value;
+    _this13.ajaxSettings = {
+      headers: {}
+    };
+    return _this13;
+  }
 
-						if (menu.vc === vc) {
-							menu.vc = null;
-						}
-					}
-				} catch (err) {
-					_didIteratorError = true;
-					_iteratorError = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion && _iterator.return) {
-							_iterator.return();
-						}
-					} finally {
-						if (_didIteratorError) {
-							throw _iteratorError;
-						}
-					}
-				}
-			}
-			_get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'closeVC', this).call(this, vc, resolve, reject);
-		}
-	}, {
-		key: 'render_always',
-		value: function render_always() {
-			var _this11 = this;
-
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  /** Create a view controller. */
 
 
-			// Step 2
-			var step2 = function step2() {
-				_this11.render_always_login(function () {
-					_get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always', _this11).call(_this11, function () {
-						_this11.render_always_menu(resolve, reject);
-					}, reject);
-				}, reject);
-			};
+  _createClass(NavbarVC, [{
+    key: 'closeVC',
+    value: function closeVC(vc) {
+      // console.log('NAVBARVC -> CLOSEVC');
 
-			// Step 1
-			var step1 = function step1() {
-				if (_this11.requireLoginVC != null) {
-					_this11.requireLoginVC.vc.hide(step2, reject);
-				} else {
-					step2();
-				}
-			};
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
-			// Start
-			step1();
-		}
-	}, {
-		key: 'render_always_login',
-		value: function render_always_login() {
-			var _this12 = this;
+      try {
+        for (var _iterator = this.menu[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var menu = _step.value;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+          if (menu.vc === vc) {
+            menu.vc = null;
+            break;
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
 
-			var $view_navbar_login = this.$view_navbar_login;
-			$view_navbar_login.empty();
+      return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'closeVC', this).call(this, vc);
+    }
+  }, {
+    key: 'render_always',
+    value: function render_always() {
+      var _this14 = this;
 
-			if (this.cotLogin == null) {
-				// No UI
-			} else {
-				if (this.cotLogin.isLoggedIn()) {
-					$view_navbar_login.append('\n\t\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t\t<p class="form-control-static">' + this.cotLogin.username + '</p>\n\t\t\t\t\t\t\t<button class="btn btn-default btn-logout" type="button">Logout</button>\n\t\t\t\t\t\t</form>\n\t\t\t\t').find('.btn-logout').on('click', function (e) {
-						e.preventDefault();
-						_this12.cotLogin.logout();
-					});
-				} else {
-					$view_navbar_login.append('\n\t\t\t\t\t<form class="navbar-form navbar-left">\n\t\t\t\t\t\t<button class="btn btn-default btn-login" type="button">Login</button>\n\t\t\t\t\t</form>\n\t\t\t\t').find('.btn-login').on('click', function (e) {
-						e.preventDefault();
-						_this12.cotLogin.showLogin();
-					});
-				}
-			}
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			resolve();
-		}
-	}, {
-		key: 'render_always_menu',
-		value: function render_always_menu() {
-			var _this13 = this;
+      // console.log('NAVBARVC -> RENDER ALWAYS');
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+      return this.render_always_login(options).then(function () {
+        return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always', _this14).call(_this14, options);
+      }).then(function () {
+        // console.log('NAVBARVC -> RENDER ALWAYS -> CALL');
+        return _this14.render_always_menu(options);
+      });
+    }
+  }, {
+    key: 'render_always_login',
+    value: function render_always_login() {
+      var _this15 = this;
 
-			var $view_navbar_menu = this.$view_navbar_menu;
-			$view_navbar_menu.empty().append('\n\t\t\t<ul class="nav navbar-nav">\n\t\t\t\t<li class="dropdown">\n\t\t\t\t\t<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a>\n\t\t\t\t\t<ul class="dropdown-menu">\n\t\t\t\t\t</ul>\n\t\t\t\t</li>\n\t\t\t</ul>\n\t\t');
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			var $dropDownMenu = $view_navbar_menu.find('ul.dropdown-menu');
+      // console.log('NAVBARVC -> RENDER ALWAYS LOGIN');
 
-			if (this.menu != null) {
-				var _iteratorNormalCompletion2 = true;
-				var _didIteratorError2 = false;
-				var _iteratorError2 = undefined;
+      this.$view_navbar_login.empty();
 
-				try {
-					var _loop = function _loop() {
-						var menu = _step2.value;
+      if (this.cotLogin == null) {
+        // No UI
+      } else {
+        if (this.cotLogin.isLoggedIn()) {
+          this.$view_navbar_login.append('<form class="navbar-form navbar-left"><p class="form-control-static">' + this.cotLogin.username + '</p> <button class="btn btn-default btn-logout" type="button">Logout</button></form>');
 
-						var $menuItem = $('<li><a href="#">' + menu.title + '</a></li>');
-						$dropDownMenu.append($menuItem);
-						$menuItem.find('a').on('click', function (e) {
-							e.preventDefault();
-							if (menu.vc == null) {
-								menu.vc = new _this13.vcClasses[menu.vcClass]();
-								menu.vc.options = menu.vcOptions;
-							}
-							_this13.openVC(menu.vc);
-						});
-					};
+          $('.btn-logout', this.$view_navbar_login).on('click', function (e) {
+            e.preventDefault();
+            _this15.cotLogin.logout();
+          });
+        } else {
+          this.$view_navbar_login.append('<form class="navbar-form navbar-left"><button class="btn btn-default btn-login" type="button">Login</button></form>');
 
-					for (var _iterator2 = this.menu[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-						_loop();
-					}
-				} catch (err) {
-					_didIteratorError2 = true;
-					_iteratorError2 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion2 && _iterator2.return) {
-							_iterator2.return();
-						}
-					} finally {
-						if (_didIteratorError2) {
-							throw _iteratorError2;
-						}
-					}
-				}
-			}
+          $('.btn-login', this.$view_navbar_login).on('click', function (e) {
+            e.preventDefault();
+            _this15.cotLogin.showLogin();
+          });
+        }
+      }
 
-			var vcs = this.vcs.filter(function (vc) {
-				return vc.title != null;
-			});
+      // console.log('NAVBARVC -> RENDER ALWAYS LOGIN -> RESOLVE');
+      return Promise.resolve();
+    }
+  }, {
+    key: 'render_always_menu',
+    value: function render_always_menu(options) {
+      var _this16 = this;
 
-			if (this.menu != null & this.menu.length > 0 && vcs != null && vcs.length > 0) {
-				$dropDownMenu.append($('<li role="separator" class="divider"></li>'));
-			}
+      // console.log('NAVBARVC -> RENDER ALWAYS MENU');
 
-			if (vcs != null) {
-				var _iteratorNormalCompletion3 = true;
-				var _didIteratorError3 = false;
-				var _iteratorError3 = undefined;
+      this.$view_navbar_menu.empty().append('<ul class="nav navbar-nav"><li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a><ul class="dropdown-menu"></ul></li></ul>');
 
-				try {
-					var _loop2 = function _loop2() {
-						var vc = _step3.value;
+      var $dropDownMenu = $('ul.dropdown-menu', this.$view_navbar_menu);
 
-						var $menuItem = $('<li><a href="#">' + (vc.title || 'Untitled') + '</a></li>');
-						$dropDownMenu.append($menuItem);
-						$menuItem.find('a').on('click', function (e) {
-							e.preventDefault();
-							_this13.openVC(vc);
-						});
-					};
+      // console.log(1);
 
-					for (var _iterator3 = vcs[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-						_loop2();
-					}
-				} catch (err) {
-					_didIteratorError3 = true;
-					_iteratorError3 = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion3 && _iterator3.return) {
-							_iterator3.return();
-						}
-					} finally {
-						if (_didIteratorError3) {
-							throw _iteratorError3;
-						}
-					}
-				}
-			}
+      if (this.menu != null) {
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
 
-			resolve();
-		}
-	}, {
-		key: 'render_once',
-		value: function render_once() {
-			var _this14 = this;
+        try {
+          var _loop = function _loop() {
+            var menu = _step2.value;
 
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+            var $menuItem = $('<li><a href="#">' + menu.title + '</a></li>');
+            $dropDownMenu.append($menuItem);
 
-			this.ajaxSettings = {
-				headers: {}
-			};
+            $('a', $menuItem).on('click', function (e) {
+              e.preventDefault();
+              if (menu.vc == null) {
+                menu.vc = new _this16.vcClasses[menu.vcClass]();
+                _this16.openVC(menu.vc, menu.vcOptions);
+              } else {
+                _this16.openVC(menu.vc);
+              }
+            });
+          };
 
-			_get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_once', this).call(this, function () {
+          for (var _iterator2 = this.menu[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            _loop();
+          }
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+              _iterator2.return();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+      }
 
-				// SET UP COTLOGIN
-				if (_this14.cotLogin != null) {
-					var setLog = function setLog() {
-						if (_this14.cotLogin.isLoggedIn()) {
-							// this.ajaxSettings.headers.Authorization = `AuthSession ${this.cotLogin.sid}`;
-							_this14.ajaxSettings.headers.Authorization = _this14.cotLogin.sid;
-						}
-					};
+      // console.log(2);
 
-					_this14.cotLogin.options.onLogin = function () {
-						setLog();
-						_this14.render();
-					};
+      var vcs = this.vcs.filter(function (vc) {
+        return vc.title != null;
+      });
 
-					setLog();
-				}
+      if (this.menu != null & this.menu.length > 0 && vcs != null && vcs.length > 0) {
+        $dropDownMenu.append($('<li role="separator" class="divider"></li>'));
+      }
 
-				// VIEW
-				var $view = _this14.$view = $('\n\t\t\t\t<nav class="navbar navbar-default navvc">\n\t\t\t\t\t<div class="container-fluid">\n\t\t\t\t\t\t<div class="navbar-header">\n\t\t\t\t\t\t\t<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">\n\t\t\t\t\t\t\t\t<span class="sr-only">Toggle navigation</span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<span class="navbar-brand"></span>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">\n\t\t\t\t\t\t\t<div class="navbar-left">\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-vc-ui"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class="navbar-right">\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-menu"></div>\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-login"></div>\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-lock"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t\t');
+      // console.log(3);
 
-				_this14.$view_navbar_brand = $('.navbar-brand', $view);
-				_this14.$view_navbar_vc_ui = $('.navbar-vc-ui', $view);
-				_this14.$view_navbar_menu = $('.navbar-menu', $view);
-				_this14.$view_navbar_login = $('.navbar-login', $view);
+      if (vcs != null) {
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
 
-				// LOCK ICON
-				$('.navbar-lock', $view).append($('.securesite > img'));
+        try {
+          var _loop2 = function _loop2() {
+            var vc = _step3.value;
 
-				// APPEND TO HTML
-				_this14.options.$placeholder.append(_this14.$view);
+            var $menuItem = $('<li><a href="#">' + (vc.title || 'Untitled') + '</a></li>');
+            $dropDownMenu.append($menuItem);
+            $('a', $menuItem).on('click', function (e) {
+              e.preventDefault();
+              _this16.openVC(vc);
+            });
+          };
 
-				if (_this14.requireLoginVC != null) {
-					_this14.requireLoginVC.vc = new _this14.vcClasses[_this14.requireLoginVC.vcClass]();
-					_this14.requireLoginVC.navVC = _this14;
-					_this14.requireLoginVC.vc.options = _this14.requireLoginVC.vcOptions;
-					_this14.requireLoginVC.vc.render(resolve, reject);
-				} else {
-					resolve();
-				}
-			}, reject);
-		}
-	}]);
+          for (var _iterator3 = vcs[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            _loop2();
+          }
+        } catch (err) {
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+              _iterator3.return();
+            }
+          } finally {
+            if (_didIteratorError3) {
+              throw _iteratorError3;
+            }
+          }
+        }
+      }
 
-	return NavbarVC;
+      // console.log('NAVBARVC -> RENDER ALWAYS MENU -> RESOLVE');
+      return Promise.resolve();
+    }
+  }, {
+    key: 'render_once',
+    value: function render_once(options) {
+      var _this17 = this;
+
+      // console.log('NAVBARVC -> RENDER ONCE');
+
+      return this.render_once_login(options).then(function () {
+        _this17.$view = $('\n\t\t\t\t<nav class="navbar navbar-default navvc">\n\t\t\t\t\t<div class="container-fluid">\n\t\t\t\t\t\t<div class="navbar-header">\n\t\t\t\t\t\t\t<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">\n\t\t\t\t\t\t\t\t<span class="sr-only">Toggle navigation</span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<span class="navbar-brand"></span>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">\n\t\t\t\t\t\t\t<div class="navbar-left">\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-vc-ui"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class="navbar-right">\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-menu"></div>\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-login"></div>\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-lock"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t\t');
+
+        _this17.$view_navbar_brand = $('.navbar-brand', _this17.$view);
+        _this17.$view_navbar_vc_ui = $('.navbar-vc-ui', _this17.$view);
+        _this17.$view_navbar_menu = $('.navbar-menu', _this17.$view);
+        _this17.$view_navbar_login = $('.navbar-login', _this17.$view);
+
+        // LOCK ICON
+        $('.navbar-lock', _this17.$view).append($('.securesite > img'));
+
+        return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_once', _this17).call(_this17, options);
+      });
+    }
+  }, {
+    key: 'render_once_login',
+    value: function render_once_login() {
+      var _this18 = this;
+
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      // console.log('NAVBARVC -> RENDER ONCE LOGIN');
+
+      if (this.cotLogin) {
+        if (this.cotLogin.isLoggedIn()) {
+          // this.ajaxSettings.headers.Authorization = `AuthSession ${cotLogin.sid}`;
+          this.ajaxSettings.headers.Authorization = this.cotLogin.sid;
+        }
+        this.cotLogin.options.onLogin = function () {
+          if (_this18.cotLogin.isLoggedIn()) {
+            _this18.ajaxSettings.headers.Authorization = _this18.cotLogin.sid;
+          }
+          _this18.render();
+        };
+      }
+
+      return Promise.resolve();
+    }
+  }]);
+
+  return NavbarVC;
 }(NavVC);
 
-/**
- Require Login View Controller
- Property:
- - options
- */
+/** Require Login View Controller */
 
 
 var RequireLoginVC = function (_VC2) {
-	_inherits(RequireLoginVC, _VC2);
+  _inherits(RequireLoginVC, _VC2);
 
-	function RequireLoginVC() {
-		_classCallCheck(this, RequireLoginVC);
+  function RequireLoginVC() {
+    _classCallCheck(this, RequireLoginVC);
 
-		return _possibleConstructorReturn(this, (RequireLoginVC.__proto__ || Object.getPrototypeOf(RequireLoginVC)).apply(this, arguments));
-	}
+    return _possibleConstructorReturn(this, (RequireLoginVC.__proto__ || Object.getPrototypeOf(RequireLoginVC)).apply(this, arguments));
+  }
 
-	_createClass(RequireLoginVC, [{
-		key: 'render_once',
-		value: function render_once() {
-			var resolve = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
-			var reject = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  _createClass(RequireLoginVC, [{
+    key: 'render_once',
+    value: function render_once() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			var $view = this.$view = $('\n\t\t\t<div>\n\t\t\t\t<p>Please login</p>\n\t\t\t</div>\n\t\t');
-			this.options.$placeholder.append($view);
-			this.$view.hide();
-			resolve();
-		}
-	}]);
+      this.$view = $('\n\t\t\t<div>\n\t\t\t\t<p>Please login</p>\n\t\t\t</div>\n\t\t');
+      return _get(RequireLoginVC.prototype.__proto__ || Object.getPrototypeOf(RequireLoginVC.prototype), 'render_once', this).call(this, options);
+    }
+  }]);
 
-	return RequireLoginVC;
+  return RequireLoginVC;
 }(VC);
