@@ -10,7 +10,7 @@ class MC {
   constructor(model = {}, url, ajaxSettings) {
     this.model = model;
     this.url = url;
-    this.ajaxSettings = $({
+    this.ajaxSettings = $.extend({
       contentType: 'application/json; charset=UTF-8'
     }, ajaxSettings);
   }
@@ -78,7 +78,7 @@ class MC {
         url: this.url
       }));
     }).then((data) => {
-      this.model.id = jqXHR.getResponseHeader('OData-EntityID');
+      this.model.id = data.id;
       return data;
     });
   }

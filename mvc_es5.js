@@ -28,7 +28,7 @@ var MC = function () {
 
     this.model = model;
     this.url = url;
-    this.ajaxSettings = $({
+    this.ajaxSettings = $.extend({
       contentType: 'application/json; charset=UTF-8'
     }, ajaxSettings);
   }
@@ -115,7 +115,8 @@ var MC = function () {
           url: _this3.url
         }));
       }).then(function (data) {
-        _this3.model.id = jqXHR.getResponseHeader('OData-EntityID');
+        // this.model.id = jqXHR.getResponseHeader('OData-EntityID');
+        _this3.model.id = data.id;
         return data;
       });
     }
