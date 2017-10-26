@@ -44,3 +44,6 @@
 #maincontent .navvc .container-fluid button {
   margin: 0;
 }
+#maincontent .navvc .container-fluid .dropdown-menu {
+  z-index: 1001;
+}
