@@ -115,7 +115,6 @@ var MC = function () {
           url: _this3.url
         }));
       }).then(function (data) {
-        // this.model.id = jqXHR.getResponseHeader('OData-EntityID');
         _this3.model.id = data.id;
         return data;
       });
@@ -283,17 +282,17 @@ var VC = function () {
 
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      // console.log('VC -> RENDER');
-
+      // console.log('VC - RENDER');
       return new Promise(function (resolve, reject) {
         if (!_this9.renderedOnce) {
           _this9.renderedOnce = true;
-          _this9.render_once(options).then(resolve, reject);
+          _this9.render_once(options || {}).then(resolve, reject);
         } else {
           resolve();
         }
       }).then(function () {
-        return _this9.render_always(options);
+        // console.log('VC - THEN');
+        return _this9.render_always(options || {});
       });
     }
 
@@ -411,9 +410,10 @@ var NavVC = function (_VC) {
     }
   }, {
     key: 'openVC',
-    value: function openVC(vc, vcOptions) {
-      // console.log('NAVVC -> OPENVC');
+    value: function openVC(vc) {
+      var vcOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+      // console.log('NAVVC - OPEN VC');
       var i = this.vcs.indexOf(vc);
       if (i > -1) {
         this.vcs.splice(i, 1);
@@ -422,7 +422,7 @@ var NavVC = function (_VC) {
       vc.navVC = this;
       this.vcs.push(vc);
 
-      return this.render({ vcOptions: vcOptions });
+      return this.render({ vcOptions: vcOptions || {} });
     }
   }, {
     key: 'render_always',
@@ -449,7 +449,7 @@ var NavVC = function (_VC) {
 
           var topVC = _this12.vcs[_this12.vcs.length - 1];
           // console.log('topVC', topVC);
-          return topVC.render(options.vcOptions).then(function () {
+          return topVC.render(options.vcOptions || {}).then(function () {
             // console.log('topVC -> show');
             return topVC.show();
           });
@@ -528,6 +528,20 @@ var NavbarVC = function (_NavVC) {
       return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'closeVC', this).call(this, vc);
     }
   }, {
+    key: 'openVC',
+    value: function openVC(vc) {
+      var vcOptions = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      // console.log('NAVBARVC - OPEN VC');
+      if (typeof vc === 'string') {
+        var vcClass = vc;
+        vc = new this.vcClasses[vcClass]();
+        vc.vcClass = vcClass;
+      }
+
+      return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'openVC', this).call(this, vc, vcOptions || {});
+    }
+  }, {
     key: 'render_always',
     value: function render_always() {
       var _this14 = this;
@@ -536,11 +550,11 @@ var NavbarVC = function (_NavVC) {
 
       // console.log('NAVBARVC -> RENDER ALWAYS');
 
-      return this.render_always_login(options).then(function () {
-        return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always', _this14).call(_this14, options);
+      return this.render_always_login(options || {}).then(function () {
+        return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_always', _this14).call(_this14, options || {});
       }).then(function () {
         // console.log('NAVBARVC -> RENDER ALWAYS -> CALL');
-        return _this14.render_always_menu(options);
+        return _this14.render_always_menu(options || {});
       });
     }
   }, {
@@ -579,16 +593,14 @@ var NavbarVC = function (_NavVC) {
     }
   }, {
     key: 'render_always_menu',
-    value: function render_always_menu(options) {
+    value: function render_always_menu() {
       var _this16 = this;
 
-      // console.log('NAVBARVC -> RENDER ALWAYS MENU');
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       this.$view_navbar_menu.empty().append('<ul class="nav navbar-nav"><li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a><ul class="dropdown-menu"></ul></li></ul>');
 
       var $dropDownMenu = $('ul.dropdown-menu', this.$view_navbar_menu);
-
-      // console.log(1);
 
       if (this.menu != null) {
         var _iteratorNormalCompletion2 = true;
@@ -605,8 +617,11 @@ var NavbarVC = function (_NavVC) {
             $('a', $menuItem).on('click', function (e) {
               e.preventDefault();
               if (menu.vc == null) {
-                menu.vc = new _this16.vcClasses[menu.vcClass]();
-                _this16.openVC(menu.vc, menu.vcOptions);
+                // menu.vc = new this.vcClasses[menu.vcClass]();
+                // this.openVC(menu.vc, menu.vcOptions);
+                _this16.openVC(menu.vcClass, menu.vcOptions || {}).then(function () {
+                  menu.vc = _this16.vcs[_this16.vcs.length - 1];
+                });
               } else {
                 _this16.openVC(menu.vc);
               }
@@ -685,12 +700,14 @@ var NavbarVC = function (_NavVC) {
     }
   }, {
     key: 'render_once',
-    value: function render_once(options) {
+    value: function render_once() {
       var _this17 = this;
+
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       // console.log('NAVBARVC -> RENDER ONCE');
 
-      return this.render_once_login(options).then(function () {
+      return this.render_once_login(options || {}).then(function () {
         _this17.$view = $('\n\t\t\t\t<nav class="navbar navbar-default navvc">\n\t\t\t\t\t<div class="container-fluid">\n\t\t\t\t\t\t<div class="navbar-header">\n\t\t\t\t\t\t\t<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">\n\t\t\t\t\t\t\t\t<span class="sr-only">Toggle navigation</span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t\t<span class="icon-bar"></span>\n\t\t\t\t\t\t\t</button>\n\t\t\t\t\t\t\t<span class="navbar-brand"></span>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t\t<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">\n\t\t\t\t\t\t\t<div class="navbar-left">\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-vc-ui"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t\t<div class="navbar-right">\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-menu"></div>\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-login"></div>\n\t\t\t\t\t\t\t\t<div class="nav navbar-nav navbar-lock"></div>\n\t\t\t\t\t\t\t</div>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t</div>\n\t\t\t\t</nav>\n\t\t\t');
 
         _this17.$view_navbar_brand = $('.navbar-brand', _this17.$view);
@@ -701,7 +718,7 @@ var NavbarVC = function (_NavVC) {
         // LOCK ICON
         $('.navbar-lock', _this17.$view).append($('.securesite > img'));
 
-        return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_once', _this17).call(_this17, options);
+        return _get(NavbarVC.prototype.__proto__ || Object.getPrototypeOf(NavbarVC.prototype), 'render_once', _this17).call(_this17, options || {});
       });
     }
   }, {
@@ -751,7 +768,7 @@ var RequireLoginVC = function (_VC2) {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       this.$view = $('\n\t\t\t<div>\n\t\t\t\t<p>Please login</p>\n\t\t\t</div>\n\t\t');
-      return _get(RequireLoginVC.prototype.__proto__ || Object.getPrototypeOf(RequireLoginVC.prototype), 'render_once', this).call(this, options);
+      return _get(RequireLoginVC.prototype.__proto__ || Object.getPrototypeOf(RequireLoginVC.prototype), 'render_once', this).call(this, options || {});
     }
   }]);
 

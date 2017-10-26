@@ -187,17 +187,17 @@ class VC {
    * @param {object} options
    */
   render(options = {}) {
-		// console.log('VC -> RENDER');
-
+    // console.log('VC - RENDER');
     return new Promise((resolve, reject) => {
       if (!this.renderedOnce) {
         this.renderedOnce = true;
-        this.render_once(options).then(resolve, reject);
+        this.render_once(options || {}).then(resolve, reject);
       } else {
         resolve();
       }
     }).then(() => {
-      return this.render_always(options);
+      // console.log('VC - THEN');
+      return this.render_always(options || {});
     });
   }
 
@@ -287,9 +287,8 @@ class NavVC extends VC {
     });
   }
 
-  openVC(vc, vcOptions) {
-		// console.log('NAVVC -> OPENVC');
-
+  openVC(vc, vcOptions = {}) {
+    // console.log('NAVVC - OPEN VC');
     const i = this.vcs.indexOf(vc);
     if (i > -1) {
       this.vcs.splice(i, 1);
@@ -298,7 +297,7 @@ class NavVC extends VC {
     vc.navVC = this;
     this.vcs.push(vc);
 
-    return this.render({ vcOptions: vcOptions });
+    return this.render({ vcOptions: vcOptions || {} });
   }
 
   render_always(options = {}) {
@@ -320,7 +319,7 @@ class NavVC extends VC {
 
         const topVC = this.vcs[this.vcs.length - 1];
 				// console.log('topVC', topVC);
-        return topVC.render(options.vcOptions).then(() => {
+        return topVC.render(options.vcOptions || {}).then(() => {
 					// console.log('topVC -> show');
           return topVC.show();
         });
@@ -360,14 +359,25 @@ class NavbarVC extends NavVC {
     return super.closeVC(vc);
   }
 
+  openVC(vc, vcOptions = {}) {
+    // console.log('NAVBARVC - OPEN VC');
+    if (typeof vc === 'string') {
+      const vcClass = vc;
+      vc = new this.vcClasses[vcClass]();
+      vc.vcClass = vcClass;
+    }
+
+    return super.openVC(vc, vcOptions || {});
+  }
+
   render_always(options = {}) {
 		// console.log('NAVBARVC -> RENDER ALWAYS');
 
-    return this.render_always_login(options).then(() => {
-      return super.render_always(options);
+    return this.render_always_login(options || {}).then(() => {
+      return super.render_always(options || {});
     }).then(() => {
 			// console.log('NAVBARVC -> RENDER ALWAYS -> CALL');
-      return this.render_always_menu(options);
+      return this.render_always_menu(options || {});
     });
   }
 
@@ -400,14 +410,10 @@ class NavbarVC extends NavVC {
     return Promise.resolve();
   }
 
-  render_always_menu(options) {
-		// console.log('NAVBARVC -> RENDER ALWAYS MENU');
-
+  render_always_menu(options = {}) {
     this.$view_navbar_menu.empty().append('<ul class="nav navbar-nav"><li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Navigation <span class="caret"></span></a><ul class="dropdown-menu"></ul></li></ul>');
 
     const $dropDownMenu = $('ul.dropdown-menu', this.$view_navbar_menu);
-
-		// console.log(1);
 
     if (this.menu != null) {
       for (const menu of this.menu) {
@@ -417,8 +423,11 @@ class NavbarVC extends NavVC {
         $('a', $menuItem).on('click', (e) => {
           e.preventDefault();
           if (menu.vc == null) {
-            menu.vc = new this.vcClasses[menu.vcClass]();
-            this.openVC(menu.vc, menu.vcOptions);
+            // menu.vc = new this.vcClasses[menu.vcClass]();
+            // this.openVC(menu.vc, menu.vcOptions);
+            this.openVC(menu.vcClass, menu.vcOptions || {}).then(() => {
+              menu.vc = this.vcs[this.vcs.length - 1];
+            });
           } else {
             this.openVC(menu.vc);
           }
@@ -451,10 +460,10 @@ class NavbarVC extends NavVC {
     return Promise.resolve();
   }
 
-  render_once(options) {
+  render_once(options = {}) {
 		// console.log('NAVBARVC -> RENDER ONCE');
 
-    return this.render_once_login(options).then(() => {
+    return this.render_once_login(options || {}).then(() => {
       this.$view = $(`
 				<nav class="navbar navbar-default navvc">
 					<div class="container-fluid">
@@ -489,7 +498,7 @@ class NavbarVC extends NavVC {
       // LOCK ICON
       $('.navbar-lock', this.$view).append($('.securesite > img'));
 
-      return super.render_once(options);
+      return super.render_once(options || {});
     });
   }
 
@@ -521,6 +530,6 @@ class RequireLoginVC extends VC {
 				<p>Please login</p>
 			</div>
 		`);
-    return super.render_once(options);
+    return super.render_once(options || {});
   }
 }
